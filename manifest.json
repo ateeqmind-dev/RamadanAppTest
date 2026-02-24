@@ -1,0 +1,17 @@
+{
+  "name": "Sahar & Iftar App",
+  "short_name": "Ramadan App Test",
+  "description": "Daily Sahar and Iftar timings with Dark Mode and Countdown.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0F3738",
+  "theme_color": "#0F3738",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/2290/2290073.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

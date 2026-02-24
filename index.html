@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sahar & Iftar Timings</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0F3738">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2290/2290073.png">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&display=swap');
+
+        :root {
+            --bg-top: #0F3738;
+            --bg-bottom: #FDF9F1;
+            --gold: #D7AE5D;
+            --text-dark: #0F3738;
+            --text-light: #ffffff;
+            --surface: #ffffff;
+            --border: rgba(15, 55, 56, 0.1);
+            --modal-border: #ddd;
+            --body-bg: #e5e5e5;
+            --font-main: 'Poppins', sans-serif;
+            --font-urdu: 'Noto Nastaliq Urdu', serif;
+        }
+
+        [data-theme="dark"] {
+            --bg-top: #0a2425;
+            --bg-bottom: #121212;
+            --text-dark: #f0f0f0;
+            --text-light: #e0e0e0;
+            --surface: #1e1e1e;
+            --border: rgba(255, 255, 255, 0.1);
+            --modal-border: #333;
+            --body-bg: #000000;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--body-bg);
+            display: flex;
+            justify-content: center;
+            height: 100vh;
+            height: 100dvh;
+            overflow: hidden;
+            transition: background-color 0.3s ease;
+        }
+
+        body.lang-ur {
+            font-family: var(--font-urdu);
+            direction: ltr;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 450px;
+            height: 100%;
+            background-color: var(--bg-bottom);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: background-color 0.3s ease;
+        }
+
+        /* Warning Overlays */
+        .warning-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .warning-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .warning-overlay.red {
+            background-color: #ffe6e6;
+            color: #cc0000;
+        }
+
+        .warning-overlay.green {
+            background-color: #e6ffe6;
+            color: #008000;
+        }
+
+        [data-theme="dark"] .warning-overlay.red {
+            background-color: #4a0000;
+            color: #ff9999;
+        }
+
+        [data-theme="dark"] .warning-overlay.green {
+            background-color: #003300;
+            color: #99ff99;
+        }
+
+        .warning-text {
+            font-size: clamp(28px, 8vw, 36px);
+            font-weight: 700;
+            margin-bottom: 20px;
+            line-height: 1.3;
+        }
+
+        .warning-timer {
+            font-size: clamp(36px, 10vw, 48px);
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+            font-family: var(--font-main);
+        }
+
+        .warning-close-btn {
+            margin-top: 30px;
+            padding: 10px 30px;
+            background: rgba(0, 0, 0, 0.1);
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            color: inherit;
+        }
+
+        [data-theme="dark"] .warning-close-btn {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* TOP SECTION */
+        .top-section {
+            background-color: var(--bg-top);
+            color: var(--text-light);
+            text-align: center;
+            padding: 2vh 20px 3vh;
+            position: relative;
+            border-bottom: 4px solid var(--gold);
+            transition: background-color 0.3s ease;
+        }
+
+        .top-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .icon-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: var(--gold);
+            font-family: var(--font-main);
+            font-weight: 600;
+            font-size: 10px;
+            text-transform: uppercase;
+        }
+
+        .icon-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--gold);
+            transition: transform 0.3s ease;
+        }
+
+        .icon-btn:active svg {
+            transform: scale(0.9);
+        }
+
+        .mosque-icon svg {
+            width: 45px;
+            height: auto;
+            fill: var(--gold);
+            margin-bottom: 1.5vh;
+        }
+
+        /* New Date Styles */
+        .islamic-date {
+            font-size: clamp(22px, 6.5vw, 28px);
+            font-weight: 700;
+            margin-bottom: 2px;
+            font-family: var(--font-main);
+            direction: ltr;
+        }
+
+        .english-date {
+            font-size: clamp(14px, 4vw, 16px);
+            font-weight: 400;
+            margin-bottom: 6px;
+            font-family: var(--font-main);
+            direction: ltr;
+            opacity: 0.85;
+        }
+
+        .day-display {
+            font-size: 14px;
+            font-weight: 300;
+            letter-spacing: 1px;
+            color: #ccc;
+        }
+
+        /* BOTTOM SECTION */
+        .bottom-section {
+            padding: 2vh 20px;
+            text-align: center;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+        }
+
+        .title-text {
+            color: var(--text-dark);
+            font-weight: 700;
+            font-size: clamp(16px, 5vw, 20px);
+            transition: color 0.3s ease;
+        }
+
+        .city-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .city-selector {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 8px 20px;
+            border: 1.5px solid var(--gold);
+            border-radius: 30px;
+            color: var(--text-dark);
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 4px;
+            background: transparent;
+            font-size: 16px;
+            transition: color 0.3s ease;
+            font-family: inherit;
+        }
+
+        .city-selector svg {
+            width: 16px;
+            fill: var(--text-dark);
+            transition: fill 0.3s ease;
+        }
+
+        .city-hint {
+            font-size: 11px;
+            color: var(--text-dark);
+            opacity: 0.6;
+            font-weight: 400;
+            transition: color 0.3s ease;
+        }
+
+        .timings-wrapper {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .timing-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5vh 5px;
+            flex: 1;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .timing-box h2 {
+            font-size: 16px;
+            color: var(--gold);
+            margin-bottom: 4px;
+            font-weight: 700;
+        }
+
+        .timing-box .time {
+            font-size: clamp(16px, 4.5vw, 19px);
+            color: var(--text-dark);
+            font-weight: 700;
+            font-family: var(--font-main);
+            direction: ltr;
+        }
+
+        .dua-btn {
+            margin-top: 10px;
+            padding: 4px 12px;
+            background: rgba(215, 174, 93, 0.15);
+            color: var(--gold);
+            border: 1px solid var(--gold);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            transition: background 0.2s;
+        }
+
+        .dua-btn:active {
+            background: rgba(215, 174, 93, 0.4);
+        }
+
+        .countdown-box {
+            background: var(--bg-top);
+            color: white;
+            border-radius: 12px;
+            padding: 2vh 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .countdown-label {
+            font-size: 13px;
+            color: var(--gold);
+            margin-bottom: 6px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .countdown-timer {
+            font-size: clamp(26px, 8vw, 32px);
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+            font-family: var(--font-main);
+            direction: ltr;
+        }
+
+        .calendar-btn {
+            background: transparent;
+            color: var(--text-dark);
+            border: none;
+            text-decoration: underline;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            padding: 10px;
+            font-family: inherit;
+        }
+
+        /* Modals */
+        .modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: var(--bg-bottom);
+            width: 100%;
+            max-height: 90%;
+            border-radius: 16px;
+            padding: 20px;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--bg-top);
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 10;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        body.lang-ur .close-btn {
+            right: auto;
+            left: 15px;
+        }
+
+        /* Adjust close btn for RTL */
+
+        .city-list {
+            list-style: none;
+            margin-top: 20px;
+        }
+
+        .city-list li {
+            padding: 15px;
+            border-bottom: 1px solid var(--modal-border);
+            font-weight: 600;
+            color: var(--text-dark);
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            margin-top: 20px;
+            direction: ltr;
+            /* keep table ltr to maintain numbers */
+        }
+
+        .calendar-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: clamp(11px, 3.5vw, 14px);
+            font-family: var(--font-main);
+        }
+
+        .calendar-table th,
+        .calendar-table td {
+            border: 1px solid var(--modal-border);
+            padding: 8px 4px;
+            text-align: center;
+            color: var(--text-dark);
+            white-space: nowrap;
+        }
+
+        .calendar-table th {
+            background: var(--bg-top);
+            color: white;
+        }
+
+        .active-day {
+            background-color: rgba(215, 174, 93, 0.4) !important;
+            font-weight: bold;
+        }
+
+        /* Dua Modal Specific */
+        .dua-arabic {
+            font-family: 'Amiri', serif, sans-serif;
+            font-size: 26px;
+            line-height: 2;
+            text-align: center;
+            color: var(--text-dark);
+            margin: 20px 0;
+            direction: rtl;
+            font-weight: bold;
+        }
+
+        .dua-trans {
+            text-align: center;
+            color: var(--text-dark);
+            font-size: 14px;
+            opacity: 0.8;
+            margin-bottom: 10px;
+        }
+
+        /* Ensure the credit text stays visible and format it */
+        .credit {
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-dark);
+            opacity: 0.7;
+            padding: 5px 0 15px;
+            flex-shrink: 0;
+            /* Prevents flexbox from pushing it out of the container */
+        }
+
+        /* Tweak flexbox spacing when the taller Urdu font is active */
+        body.lang-ur .bottom-section {
+            justify-content: space-between;
+            gap: 1vh;
+            padding-top: 1.5vh;
+            padding-bottom: 1vh;
+        }
+
+        body.lang-ur .title-text {
+            line-height: 1.3;
+            /* Keeps Nastaliq from creating massive gaps */
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="app-container">
+
+        <div id="warning-layer" class="warning-overlay">
+            <div id="warning-text" class="warning-text"></div>
+            <div id="warning-timer" class="warning-timer"></div>
+            <button id="warning-close" class="warning-close-btn" style="display:none;" onclick="closeWarning()">Close /
+                بند کریں</button>
+        </div>
+
+        <div class="top-section">
+            <div class="top-controls">
+                <button class="icon-btn" onclick="toggleTheme()">
+                    <svg id="theme-icon" viewBox="0 0 24 24"></svg>
+                    <span data-i18n="theme">Theme</span>
+                </button>
+                <button class="icon-btn" onclick="toggleAudio()">
+                    <svg id="audio-icon" viewBox="0 0 24 24"></svg>
+                    <span data-i18n="audio">Sound</span>
+                </button>
+                <button class="icon-btn" onclick="toggleLang()">
+                    <svg viewBox="0 0 24 24">
+                        <path
+                            d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm6.93 6h-2.95c-.32-1.25-.78-2.45-1.38-3.56 1.84.63 3.37 1.91 4.33 3.56zM12 4.04c.83 1.2 1.48 2.53 1.91 3.96h-3.82c.43-1.43 1.08-2.76 1.91-3.96zM4.26 14C4.1 13.36 4 12.69 4 12s.1-1.36.26-2h3.38c-.08.66-.14 1.32-.14 2s.06 1.34.14 2H4.26zm.82 2h2.95c.32 1.25.78 2.45 1.38 3.56-1.84-.63-3.37-1.9-4.33-3.56zm2.95-8H5.08c.96-1.66 2.49-2.93 4.33-3.56C8.81 5.55 8.35 6.75 8.03 8zM12 19.96c-.83-1.2-1.48-2.53-1.91-3.96h3.82c-.43 1.43-1.08 2.76-1.91 3.96zM14.34 14H9.66c-.09-.66-.16-1.32-.16-2s.07-1.34.16-2h4.68c.09.66.16 1.32.16 2s-.07 1.34-.16 2zm.25 5.56c.6-1.11 1.06-2.31 1.38-3.56h2.95c-.96 1.65-2.49 2.93-4.33 3.56zM16.36 14c.08-.66.14-1.32.14-2s-.06-1.34-.14-2h3.38c.16.64.26 1.31.26 2s-.1 1.36-.26 2h-3.38z" />
+                    </svg>
+                    <span id="lang-text">EN/UR</span>
+                </button>
+            </div>
+
+            <div class="mosque-icon">
+                <svg viewBox="0 0 24 24">
+                    <path
+                        d="M12 2C10.89 2 10 2.89 10 4V4.5C8.82 5.06 8 6.42 8 8V12H4V14H6V22H18V14H20V12H16V8C16 6.42 15.18 5.06 14 4.5V4C14 2.89 13.11 2 12 2M12 4C12.55 4 13 4.45 13 5V5.5C13 5.5 13 6 12 6C11 6 11 5.5 11 5.5V5C11 4.45 11.45 4 12 4M12 7C14.21 7 16 8.79 16 11V12H8V11C8 8.79 9.79 7 12 7Z" />
+                </svg>
+            </div>
+            <div class="islamic-date" id="islamic-date">--</div>
+            <div class="english-date" id="english-date">--</div>
+            <div class="day-display" id="day-display" data-i18n-day="--">--</div>
+        </div>
+
+        <div class="bottom-section">
+            <div class="title-text" data-i18n="mainTitle">SAHAR-O-IFTAR TIMING</div>
+
+            <div class="city-wrapper">
+                <button class="city-selector" onclick="openCityModal()">
+                    <svg viewBox="0 0 24 24">
+                        <path
+                            d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                    </svg>
+                    <span id="selected-city">KARACHI</span>
+                </button>
+                <span class="city-hint" data-i18n="cityHint">Click on city name to change</span>
+            </div>
+
+            <div class="timings-wrapper">
+                <div class="timing-box">
+                    <h2 data-i18n="saharTitle">SAHAR</h2>
+                    <div class="time" id="sahar-time">--:--:--</div>
+                    <button class="dua-btn" data-i18n="readDua" onclick="openDuaModal('sahar')">Read Dua</button>
+                </div>
+                <div class="timing-box">
+                    <h2 data-i18n="iftarTitle">IFTAR</h2>
+                    <div class="time" id="iftar-time">--:--:--</div>
+                    <button class="dua-btn" data-i18n="readDua" onclick="openDuaModal('iftar')">Read Dua</button>
+                </div>
+            </div>
+
+            <div class="countdown-box">
+                <div class="countdown-label" id="countdown-label" data-i18n="timeLeft">Time left</div>
+                <div class="countdown-timer" id="countdown-timer">00:00:00</div>
+            </div>
+
+            <button class="calendar-btn" data-i18n="viewCalendar" onclick="openCalendarModal()">View Full Month
+                Calendar</button>
+        </div>
+
+        <div class="modal-overlay" id="city-modal">
+            <div class="modal-content">
+                <button class="close-btn" onclick="closeModals()">✕</button>
+                <h3 style="text-align:center; color: var(--text-dark); margin-top:10px;" data-i18n="selectCity">Select
+                    City</h3>
+                <ul class="city-list">
+                    <li onclick="changeCity('KARACHI')" data-i18n-city="KARACHI">KARACHI</li>
+                    <li onclick="changeCity('LAHORE')" data-i18n-city="LAHORE">LAHORE</li>
+                    <li onclick="changeCity('ISLAMABAD')" data-i18n-city="ISLAMABAD">ISLAMABAD</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="modal-overlay" id="calendar-modal">
+            <div class="modal-content">
+                <button class="close-btn" onclick="closeModals()">✕</button>
+                <h3 style="text-align:center; color: var(--text-dark); margin-top:10px;" id="cal-title">Ramadan Calendar
+                </h3>
+                <div class="table-responsive">
+                    <table class="calendar-table">
+                        <thead>
+                            <tr>
+                                <th data-i18n="calRoza">Roza</th>
+                                <th data-i18n="calDate">Date</th>
+                                <th data-i18n="saharTitle">Sahar</th>
+                                <th data-i18n="iftarTitle">Iftar</th>
+                            </tr>
+                        </thead>
+                        <tbody id="calendar-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-overlay" id="dua-modal">
+            <div class="modal-content">
+                <button class="close-btn" onclick="closeModals()">✕</button>
+                <h3 style="text-align:center; color: var(--gold); margin-top:10px;" id="dua-title">Dua</h3>
+                <div class="dua-arabic" id="dua-arabic-text"></div>
+                <div class="dua-trans" id="dua-translation"></div>
+            </div>
+        </div>
+
+        <div class="credit">App by Ateeq</div>
+
+    </div>
+
+    <script>
+        const DB = {
+            'KARACHI': [
+                ["1", "19-02-2026", "5:45:40 AM", "6:30:22 PM"], ["2", "20-02-2026", "5:44:57 AM", "6:30:57 PM"], ["3", "21-02-2026", "5:44:13 AM", "6:31:32 PM"], ["4", "22-02-2026", "5:43:28 AM", "6:32:06 PM"], ["5", "23-02-2026", "5:42:42 AM", "10:15:39 PM"], ["6", "24-02-2026", "5:41:55 AM", "6:33:13 PM"], ["7", "25-02-2026", "5:41:08 AM", "6:33:45 PM"], ["8", "26-02-2026", "5:40:19 AM", "6:34:18 PM"], ["9", "27-02-2026", "5:39:29 AM", "6:34:50 PM"], ["10", "28-02-2026", "5:38:38 AM", "6:35:22 PM"], ["11", "01-03-2026", "5:37:47 AM", "6:35:53 PM"], ["12", "02-03-2026", "5:36:54 AM", "6:36:24 PM"], ["13", "03-03-2026", "5:36:00 AM", "6:36:55 PM"], ["14", "04-03-2026", "5:35:05 AM", "6:37:25 PM"], ["15", "05-03-2026", "5:34:09 AM", "6:37:55 PM"], ["16", "06-03-2026", "5:33:12 AM", "6:38:25 PM"], ["17", "07-03-2026", "5:32:15 AM", "6:38:55 PM"], ["18", "08-03-2026", "5:31:16 AM", "6:39:24 PM"], ["19", "09-03-2026", "5:30:17 AM", "6:39:54 PM"], ["20", "10-03-2026", "5:29:16 AM", "6:40:22 PM"], ["21", "11-03-2026", "5:28:15 AM", "6:40:51 PM"], ["22", "12-03-2026", "5:27:13 AM", "6:41:20 PM"], ["23", "13-03-2026", "5:26:10 AM", "6:41:48 PM"], ["24", "14-03-2026", "5:25:06 AM", "6:42:16 PM"], ["25", "15-03-2026", "5:24:02 AM", "6:42:44 PM"], ["26", "16-03-2026", "5:22:56 AM", "6:43:11 PM"], ["27", "17-03-2026", "5:21:51 AM", "6:43:38 PM"], ["28", "18-03-2026", "5:20:44 AM", "6:44:06 PM"], ["29", "19-03-2026", "5:19:37 AM", "6:44:33 PM"], ["30", "20-03-2026", "5:18:29 AM", "6:44:59 PM"]
+            ],
+            'LAHORE': [
+                ["1", "19-02-2026", "5:18:31 AM", "5:51:24 PM"], ["2", "20-02-2026", "5:17:34 AM", "5:52:13 PM"], ["3", "21-02-2026", "5:16:36 AM", "5:53:02 PM"], ["4", "22-02-2026", "5:15:37 AM", "5:53:51 PM"], ["5", "23-02-2026", "5:14:38 AM", "5:54:40 PM"], ["6", "24-02-2026", "5:13:38 AM", "5:55:28 PM"], ["7", "25-02-2026", "5:12:37 AM", "5:56:17 PM"], ["8", "26-02-2026", "5:11:35 AM", "5:57:05 PM"], ["9", "27-02-2026", "5:10:33 AM", "5:57:53 PM"], ["10", "28-02-2026", "5:09:30 AM", "5:58:41 PM"], ["11", "01-03-2026", "5:08:26 AM", "5:59:28 PM"], ["12", "02-03-2026", "5:07:22 AM", "6:00:16 PM"], ["13", "03-03-2026", "5:06:17 AM", "6:01:03 PM"], ["14", "04-03-2026", "5:05:11 AM", "6:01:50 PM"], ["15", "05-03-2026", "5:04:05 AM", "6:02:37 PM"], ["16", "06-03-2026", "5:02:58 AM", "6:03:24 PM"], ["17", "07-03-2026", "5:01:51 AM", "6:04:10 PM"], ["18", "08-03-2026", "5:00:43 AM", "6:04:57 PM"], ["19", "09-03-2026", "4:59:35 AM", "6:05:43 PM"], ["20", "10-03-2026", "4:58:26 AM", "6:06:29 PM"], ["21", "11-03-2026", "4:57:17 AM", "6:07:15 PM"], ["22", "12-03-2026", "4:56:07 AM", "6:08:01 PM"], ["23", "13-03-2026", "4:45:56 AM", "6:08:47 PM"], ["24", "14-03-2026", "4:45:45 AM", "6:09:33 PM"], ["25", "15-03-2026", "4:45:34 AM", "6:10:18 PM"], ["26", "16-03-2026", "4:45:22 AM", "6:11:04 PM"], ["27", "17-03-2026", "4:45:10 AM", "6:11:50 PM"], ["28", "18-03-2026", "4:45:58 AM", "6:12:35 PM"], ["29", "19-03-2026", "4:45:45 AM", "6:13:21 PM"], ["30", "20-03-2026", "4:44:29 AM", "6:14:06 PM"]
+            ],
+            'ISLAMABAD': [
+                ["1", "19-02-2026", "5:24:03 AM", "5:58:15 PM"], ["2", "20-02-2026", "5:23:02 AM", "5:59:08 PM"], ["3", "21-02-2026", "5:22:00 AM", "6:00:01 PM"], ["4", "22-02-2026", "5:20:57 AM", "6:00:54 PM"], ["5", "23-02-2026", "5:19:53 AM", "6:01:46 PM"], ["6", "24-02-2026", "5:18:48 AM", "6:02:38 PM"], ["7", "25-02-2026", "5:17:41 AM", "6:03:29 PM"], ["8", "26-02-2026", "5:16:33 AM", "6:04:20 PM"], ["9", "27-02-2026", "5:15:25 AM", "6:05:11 PM"], ["10", "28-02-2026", "5:14:15 AM", "6:06:02 PM"], ["11", "01-03-2026", "5:13:05 AM", "6:06:53 PM"], ["12", "02-03-2026", "5:11:53 AM", "6:07:44 PM"], ["13", "03-03-2026", "5:10:41 AM", "6:08:34 PM"], ["14", "04-03-2026", "5:09:27 AM", "6:09:25 PM"], ["15", "05-03-2026", "5:08:13 AM", "6:10:15 PM"], ["16", "06-03-2026", "5:06:58 AM", "6:11:05 PM"], ["17", "07-03-2026", "5:05:42 AM", "6:11:55 PM"], ["18", "08-03-2026", "5:04:25 AM", "6:12:45 PM"], ["19", "09-03-2026", "5:03:07 AM", "6:13:35 PM"], ["20", "10-03-2026", "5:01:48 AM", "6:14:24 PM"], ["21", "11-03-2026", "5:00:28 AM", "6:15:14 PM"], ["22", "12-03-2026", "4:59:08 AM", "6:16:04 PM"], ["23", "13-03-2026", "4:57:46 AM", "6:16:53 PM"], ["24", "14-03-2026", "4:56:24 AM", "6:17:43 PM"], ["25", "15-03-2026", "4:55:01 AM", "6:18:32 PM"], ["26", "16-03-2026", "4:53:38 AM", "6:19:21 PM"], ["27", "17-03-2026", "4:52:13 AM", "6:20:11 PM"], ["28", "18-03-2026", "4:50:48 AM", "6:21:00 PM"], ["29", "19-03-2026", "4:49:22 AM", "6:21:49 PM"], ["30", "20-03-2026", "4:47:56 AM", "6:22:38 PM"]
+            ]
+        };
+
+        // State
+        let currentCity = localStorage.getItem('selectedCity') || 'KARACHI';
+        let currentLang = localStorage.getItem('selectedLang') || 'en';
+        let audioEnabled = localStorage.getItem('audioEnabled') === 'true'; // Default disabled
+        let todayData = null, nextData = null, timerInterval = null, overlayTimeout = null;
+        let currentPhase = ""; // 'sahar' or 'iftar'
+        let alertFlags = { sahar2min: false, sahar0: false, iftar0: false, eidShowed: false };
+
+        // Audio Context & Screen Lock
+        let audioCtx = null;
+        let wakeLock = null;
+
+        // Dictionary
+        const translations = {
+            en: {
+                theme: "Theme", audio: "Sound", mainTitle: "SAHAR-O-IFTAR TIMING",
+                saharTitle: "SAHAR", iftarTitle: "IFTAR", cityHint: "Click on city name to change",
+                timeLeft: "Time left", viewCalendar: "View Full Month Calendar", readDua: "Read Dua",
+                selectCity: "Select City", calRoza: "Roza", calDate: "Date",
+                untilSahar: "Time until Sahar", untilIftar: "Time until Iftar",
+                finishEating: "Finish Eating!", saharEnded: "Sahar Time Ended", iftarTimeMsg: "It's Iftar Time!",
+                ramadanMubarak: "Ramadan Mubarak!", calendarTitle: " Calendar",
+                ramadan: "RAMADAN", ramadanStartsIn: "Ramadan Starts in", eidMubarak: "Eid Mubarak!",
+                KARACHI: "KARACHI", LAHORE: "LAHORE", ISLAMABAD: "ISLAMABAD",
+                days: ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"],
+                months: ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"]
+            },
+            ur: {
+                theme: "تھیم", audio: "آواز", mainTitle: "سحر و افطار کے اوقات",
+                saharTitle: "سحر", iftarTitle: "افطار", cityHint: "تبدیل کرنے کے لیے شہر کے نام پر کلک کریں",
+                timeLeft: "باقی وقت", viewCalendar: "پورے مہینے کا کیلنڈر دیکھیں", readDua: "دعا پڑھیں",
+                selectCity: "شہر منتخب کریں", calRoza: "روزہ", calDate: "تاریخ",
+                untilSahar: "سحر میں باقی وقت", untilIftar: "افطار میں باقی وقت",
+                finishEating: "کھانا ختم کریں!", saharEnded: "سحر کا وقت ختم ہو گیا", iftarTimeMsg: "افطار کا وقت ہو گیا ہے!",
+                ramadanMubarak: "رمضان مبارک!", calendarTitle: " کیلنڈر",
+                ramadan: "رمضان", ramadanStartsIn: "رمضان شروع ہونے میں", eidMubarak: "عید مبارک!",
+                KARACHI: "کراچی", LAHORE: "لاہور", ISLAMABAD: "اسلام آباد",
+                days: ["اتوار", "پیر", "منگل", "بدھ", "جمعرات", "جمعہ", "ہفتہ"],
+                months: ["جنوری", "فروری", "مارچ", "اپریل", "مئی", "جون", "جولائی", "اگست", "ستمبر", "اکتوبر", "نومبر", "دسمبر"]
+            }
+        };
+
+        const duaData = {
+            sahar: {
+                arabic: "وَبِصَوْمِ غَدٍ نَّوَيْتُ مِنْ شَهْرِ رَمَضَانَ",
+                trans_en: "I intend to keep the fast for tomorrow in the month of Ramadan.",
+                trans_ur: "میں نے کل کے رمضان کے روزے کی نیت کی۔"
+            },
+            iftar: {
+                arabic: "اللَّهُمَّ إِنِّي لَكَ صُمْتُ وَبِكَ آمَنْتُ وَعَلَيْكَ تَوَكَّلْتُ وَعَلَى رِزْقِكَ أَفْطَرْتُ",
+                trans_en: "O Allah, I fasted for You and I believe in You and I put my trust in You and I break my fast with Your sustenance.",
+                trans_ur: "اے اللہ! میں نے تیرے لئے روزہ رکھا، تجھ پر ایمان لایا، تجھ پر بھروسہ کیا اور تیرے رزق سے افطار کیا۔"
+            }
+        };
+
+        // Icons
+        const icons = {
+            moon: '<path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-3.03 0-5.5-2.47-5.5-5.5 0-1.82.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/>',
+            sun: '<path d="M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5S14.76,7,12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0 c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2 c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1 C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06 c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41 l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41 c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36 c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"/>',
+            volOn: '<path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>',
+            volOff: '<path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>'
+        };
+
+        function t(key) { return translations[currentLang][key]; }
+
+        function applyLanguage() {
+            document.body.className = currentLang === 'ur' ? 'lang-ur' : '';
+            document.querySelectorAll('[data-i18n]').forEach(el => { el.innerText = t(el.getAttribute('data-i18n')); });
+            document.querySelectorAll('[data-i18n-city]').forEach(el => { el.innerText = t(el.getAttribute('data-i18n-city')); });
+            updateDashboard();
+        }
+
+        function toggleLang() {
+            currentLang = currentLang === 'en' ? 'ur' : 'en';
+            localStorage.setItem('selectedLang', currentLang);
+            applyLanguage();
+        }
+
+        function initThemeAndAudio() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            document.getElementById('theme-icon').innerHTML = savedTheme === 'dark' ? icons.sun : icons.moon;
+            document.getElementById('audio-icon').innerHTML = audioEnabled ? icons.volOn : icons.volOff;
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            document.getElementById('theme-icon').innerHTML = newTheme === 'dark' ? icons.sun : icons.moon;
+        }
+
+        function toggleAudio() {
+            audioEnabled = !audioEnabled;
+            localStorage.setItem('audioEnabled', audioEnabled);
+            document.getElementById('audio-icon').innerHTML = audioEnabled ? icons.volOn : icons.volOff;
+            // User interaction allows Web Audio API to unlock
+            if (audioEnabled) beep(440, 0.1, 0.1);
+        }
+
+        // Audio API & Background Workers
+        function initInteractions() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+
+            if ('Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission();
+            }
+            requestWakeLock();
+
+            document.removeEventListener('click', initInteractions);
+            document.removeEventListener('touchstart', initInteractions);
+        }
+        document.addEventListener('click', initInteractions);
+        document.addEventListener('touchstart', initInteractions);
+
+        async function requestWakeLock() {
+            try {
+                if ('wakeLock' in navigator) wakeLock = await navigator.wakeLock.request('screen');
+            } catch (err) { }
+        }
+        document.addEventListener('visibilitychange', () => {
+            if (wakeLock !== null && document.visibilityState === 'visible') requestWakeLock();
+        });
+
+        function triggerNotification(title, body) {
+            if ('vibrate' in navigator) navigator.vibrate([1000, 500, 1000]);
+            if ('Notification' in window && Notification.permission === 'granted') {
+                new Notification(title, { body, icon: 'https://cdn-icons-png.flaticon.com/512/2290/2290073.png' });
+            }
+        }
+
+        function beep(freq, duration, vol) {
+            if (!audioEnabled) return;
+            try {
+                const ctx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+                if (ctx.state === 'suspended') ctx.resume();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.frequency.value = freq;
+                gain.gain.value = vol;
+                osc.start();
+                osc.stop(ctx.currentTime + duration);
+            } catch (e) { }
+        }
+
+        function playSaharWarning() { beep(700, 0.3, 0.5); setTimeout(() => beep(700, 0.3, 0.5), 500); }
+        function playFinalAlert() { beep(800, 1.5, 0.5); }
+
+        function parseAppDate(dateStr) {
+            const parts = dateStr.split('-');
+            return new Date(parts[2], parts[1] - 1, parts[0]);
+        }
+
+        function parseTimeObj(dateStr, timeStr) {
+            const d = parseAppDate(dateStr);
+            const parts = timeStr.match(/(\d+):(\d+):(\d+)\s*(AM|PM)/i);
+            if (!parts) return d;
+            let h = parseInt(parts[1], 10), m = parseInt(parts[2], 10), s = parseInt(parts[3], 10);
+            if (parts[4].toUpperCase() === "PM" && h < 12) h += 12;
+            if (parts[4].toUpperCase() === "AM" && h === 12) h = 0;
+            d.setHours(h, m, s, 0);
+            return d;
+        }
+
+        function init() {
+            initThemeAndAudio();
+            applyLanguage();
+            renderCalendar();
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(updateCountdown, 1000);
+            updateCountdown();
+        }
+
+        function updateDashboard() {
+            const now = new Date();
+            const rows = DB[currentCity];
+
+            let targetIndex = -1;
+            for (let i = 0; i < rows.length; i++) {
+                const rowDate = parseAppDate(rows[i][1]);
+                const isSameDay = now.getDate() === rowDate.getDate() && now.getMonth() === rowDate.getMonth() && now.getFullYear() === rowDate.getFullYear();
+                if (isSameDay) {
+                    targetIndex = i; break;
+                } else if (now < rowDate) {
+                    targetIndex = i; break;
+                }
+            }
+
+            if (targetIndex === -1) {
+                todayData = null;
+                nextData = null;
+                currentPhase = 'eid';
+                renderEidDashboard();
+                return;
+            }
+
+            todayData = rows[targetIndex];
+            nextData = (targetIndex + 1 < rows.length) ? rows[targetIndex + 1] : null;
+
+            const dateObj = parseAppDate(todayData[1]);
+
+            document.getElementById('selected-city').innerText = t(currentCity);
+
+            const firstDay = parseAppDate(rows[0][1]);
+            const isBeforeRamadan = now < firstDay && (now.getDate() !== firstDay.getDate() || now.getMonth() !== firstDay.getMonth() || now.getFullYear() !== firstDay.getFullYear());
+
+            if (isBeforeRamadan) {
+                currentPhase = 'pre-ramadan';
+                document.getElementById('islamic-date').innerText = t('ramadan');
+            } else {
+                document.getElementById('islamic-date').innerText = `${String(todayData[0]).padStart(2, '0')} ${t('ramadan')}`;
+            }
+
+            document.getElementById('english-date').innerText = `${String(dateObj.getDate()).padStart(2, '0')} ${t('months')[dateObj.getMonth()]} ${dateObj.getFullYear()}`;
+            document.getElementById('day-display').innerText = t('days')[dateObj.getDay()];
+
+            document.getElementById('sahar-time').innerText = todayData[2];
+            document.getElementById('iftar-time').innerText = todayData[3];
+            document.getElementById('cal-title').innerText = t(currentCity) + t('calendarTitle');
+        }
+
+        function renderEidDashboard() {
+            document.getElementById('selected-city').innerText = t(currentCity);
+            document.getElementById('islamic-date').innerText = t('eidMubarak') || "Eid Mubarak!";
+            document.getElementById('english-date').innerText = "";
+            document.getElementById('day-display').innerText = "";
+            document.getElementById('sahar-time').innerText = "--:--:--";
+            document.getElementById('iftar-time').innerText = "--:--:--";
+            document.getElementById('countdown-label').innerText = t('eidMubarak') || "Eid Mubarak!";
+            document.getElementById('countdown-timer').innerText = "";
+        }
+
+        function updateCountdown() {
+            const now = new Date();
+
+            if (currentPhase === 'eid') {
+                if (!alertFlags.eidShowed) {
+                    alertFlags.eidShowed = true;
+                    showEidDecorations();
+                }
+                return;
+            }
+
+            if (currentPhase === 'pre-ramadan') {
+                const firstDaySahar = parseTimeObj(DB[currentCity][0][1], DB[currentCity][0][2]);
+                const diff = firstDaySahar - now;
+                const daysLeft = Math.floor(diff / (1000 * 60 * 60 * 24));
+                document.getElementById('countdown-label').innerText = t('ramadanStartsIn') + " " + daysLeft + " " + (daysLeft === 1 ? "day" : "days");
+                document.getElementById('countdown-timer').innerText = "";
+                return;
+            }
+
+            if (!todayData) return;
+
+            let targetTime, label;
+
+            const saharTime = parseTimeObj(todayData[1], todayData[2]);
+            const iftarTime = parseTimeObj(todayData[1], todayData[3]);
+
+            if (now < saharTime) {
+                targetTime = saharTime; label = t("untilSahar"); currentPhase = 'sahar';
+            } else if (now < iftarTime) {
+                targetTime = iftarTime; label = t("untilIftar"); currentPhase = 'iftar';
+            } else {
+                if (nextData) {
+                    targetTime = parseTimeObj(nextData[1], nextData[2]);
+                    label = t("untilSahar"); currentPhase = 'sahar';
+                } else {
+                    todayData = null;
+                    currentPhase = 'eid';
+                    renderEidDashboard();
+                    updateCountdown();
+                    return;
+                }
+            }
+
+            const diff = targetTime - now;
+            const totalSecsLeft = Math.floor(diff / 1000);
+
+            if (diff <= 0) {
+                trigger0MinEvent(currentPhase);
+                setTimeout(() => { updateDashboard(); updateCountdown(); }, 1000);
+                return;
+            }
+
+            const h = Math.floor(totalSecsLeft / 3600);
+            const m = Math.floor((totalSecsLeft % 3600) / 60);
+            const s = totalSecsLeft % 60;
+            const fmt = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+
+            document.getElementById('countdown-label').innerText = label;
+            document.getElementById('countdown-timer').innerText = fmt;
+            document.getElementById('warning-timer').innerText = fmt;
+
+            // Sahar 2-min warning
+            if (currentPhase === 'sahar' && totalSecsLeft <= 120 && totalSecsLeft > 0) {
+                if (!alertFlags.sahar2min) {
+                    alertFlags.sahar2min = true;
+                    playSaharWarning();
+                    triggerNotification(t('saharTitle'), t('finishEating'));
+                }
+                showWarning('red', t('finishEating'), true, false);
+            } else if (currentPhase === 'sahar' && totalSecsLeft > 120) {
+                alertFlags.sahar2min = false; // reset
+            }
+        }
+
+        function trigger0MinEvent(phase) {
+            if (phase === 'sahar' && !alertFlags.sahar0) {
+                alertFlags.sahar0 = true; alertFlags.iftar0 = false;
+                playFinalAlert();
+                triggerNotification(t('saharTitle'), t('saharEnded'));
+                showWarning('red', t('saharEnded'), false, true);
+                autoCloseWarning();
+            } else if (phase === 'iftar' && !alertFlags.iftar0) {
+                alertFlags.iftar0 = true; alertFlags.sahar0 = false;
+                playFinalAlert();
+                triggerNotification(t('iftarTitle'), t('iftarTimeMsg'));
+                showWarning('green', t('iftarTimeMsg'), false, true);
+                autoCloseWarning();
+            }
+        }
+
+        function showEidDecorations() {
+            showWarning('green', t('eidMubarak') || "Eid Mubarak!", false, true);
+            if (!window.confetti) {
+                const script = document.createElement('script');
+                script.src = 'https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js';
+                script.onload = triggerConfetti;
+                document.head.appendChild(script);
+            } else {
+                triggerConfetti();
+            }
+        }
+
+        function triggerConfetti() {
+            const duration = 15 * 1000;
+            const animationEnd = Date.now() + duration;
+            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 500 };
+            function randomInRange(min, max) { return Math.random() * (max - min) + min; }
+            const interval = setInterval(function () {
+                const timeLeft = animationEnd - Date.now();
+                if (timeLeft <= 0) return clearInterval(interval);
+                const particleCount = 50 * (timeLeft / duration);
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+            }, 250);
+            triggerNotification('Eid Mubarak!', 'Wishing you a joyful and blessed Eid!');
+        }
+
+        function showWarning(colorClass, text, showTimer, showClose) {
+            const layer = document.getElementById('warning-layer');
+            layer.className = `warning-overlay active ${colorClass}`;
+            document.getElementById('warning-text').innerText = text;
+            document.getElementById('warning-timer').style.display = showTimer ? 'block' : 'none';
+            document.getElementById('warning-close').style.display = showClose ? 'block' : 'none';
+        }
+
+        function closeWarning() {
+            document.getElementById('warning-layer').className = 'warning-overlay';
+            if (overlayTimeout) clearTimeout(overlayTimeout);
+        }
+
+        function autoCloseWarning() {
+            if (overlayTimeout) clearTimeout(overlayTimeout);
+            overlayTimeout = setTimeout(closeWarning, 5 * 60 * 1000); // 5 mins
+        }
+
+        function renderCalendar() {
+            const tbody = document.getElementById('calendar-body');
+            tbody.innerHTML = '';
+            const rows = DB[currentCity];
+            const now = new Date();
+
+            rows.forEach(row => {
+                const tr = document.createElement('tr');
+                const rowDate = parseAppDate(row[1]);
+                const isToday = now.getDate() === rowDate.getDate() && now.getMonth() === rowDate.getMonth();
+                if (isToday) tr.className = 'active-day';
+
+                tr.innerHTML = `<td>${row[0]}</td><td>${row[1]}</td><td>${row[2]}</td><td>${row[3]}</td>`;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function changeCity(city) {
+            currentCity = city;
+            localStorage.setItem('selectedCity', city);
+            closeModals();
+            init();
+        }
+
+        function openCityModal() { document.getElementById('city-modal').style.display = 'flex'; }
+
+        function openCalendarModal() {
+            document.getElementById('calendar-modal').style.display = 'flex';
+            setTimeout(() => {
+                const active = document.querySelector('.active-day');
+                if (active) active.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 100);
+        }
+
+        function openDuaModal(type) {
+            document.getElementById('dua-title').innerText = t(type + "Title") + " Dua";
+            document.getElementById('dua-arabic-text').innerText = duaData[type].arabic;
+            document.getElementById('dua-translation').innerText = currentLang === 'ur' ? duaData[type].trans_ur : duaData[type].trans_en;
+            document.getElementById('dua-modal').style.display = 'flex';
+        }
+
+        function closeModals() {
+            document.getElementById('city-modal').style.display = 'none';
+            document.getElementById('calendar-modal').style.display = 'none';
+            document.getElementById('dua-modal').style.display = 'none';
+        }
+
+        window.onload = init;
+    </script>
+
+</body>
+
+</html>
+
