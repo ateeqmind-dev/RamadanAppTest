@@ -99,6 +99,11 @@
             color: #cc0000;
         }
 
+        .warning-overlay.orange {
+            background-color: #fff3e0;
+            color: #e65100;
+        }
+
         .warning-overlay.green {
             background-color: #e6ffe6;
             color: #008000;
@@ -107,6 +112,11 @@
         [data-theme="dark"] .warning-overlay.red {
             background-color: #4a0000;
             color: #ff9999;
+        }
+
+        [data-theme="dark"] .warning-overlay.orange {
+            background-color: #4e342e;
+            color: #ffb74d;
         }
 
         [data-theme="dark"] .warning-overlay.green {
@@ -531,7 +541,7 @@
                 <button class="icon-btn" onclick="toggleLang()">
                     <svg viewBox="0 0 24 24">
                         <path
-                            d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm6.93 6h-2.95c-.32-1.25-.78-2.45-1.38-3.56 1.84.63 3.37 1.91 4.33 3.56zM12 4.04c.83 1.2 1.48 2.53 1.91 3.96h-3.82c.43-1.43 1.08-2.76 1.91-3.96zM4.26 14C4.1 13.36 4 12.69 4 12s.1-1.36.26-2h3.38c-.08.66-.14 1.32-.14 2s.06 1.34.14 2H4.26zm.82 2h2.95c.32 1.25.78 2.45 1.38 3.56-1.84-.63-3.37-1.9-4.33-3.56zm2.95-8H5.08c.96-1.66 2.49-2.93 4.33-3.56C8.81 5.55 8.35 6.75 8.03 8zM12 19.96c-.83-1.2-1.48-2.53-1.91-3.96h3.82c-.43 1.43-1.08 2.76-1.91 3.96zM14.34 14H9.66c-.09-.66-.16-1.32-.16-2s.07-1.34.16-2h4.68c.09.66.16 1.32.16 2s-.07 1.34-.16 2zm.25 5.56c.6-1.11 1.06-2.31 1.38-3.56h2.95c-.96 1.65-2.49 2.93-4.33 3.56zM16.36 14c.08-.66.14-1.32.14-2s-.06-1.34-.14-2h3.38c.16.64.26 1.31.26 2s-.1 1.36-.26 2h-3.38z" />
+                            d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm6.93 6h-2.95c-.32-1.25-.78-2.45-1.38-3.56 1.84.63 3.37 1.91 4.33 3.56zM12 4.04c.83 1.2 1.48 2.53 1.91 3.96h-3.82c.43-1.43 1.08-2.76 1.91-3.96zM4.26 14C4.1 13.36 4 12.69 4 12s.1-1.36.26-2h3.38c-.08.66-.14 1.32-.14 2s.06 1.34.14 2H4.26zm.82 2h2.95c.32 1.25.78 2.45 1.38 3.56-1.84-.63-3.37-1.9-4.33-3.56zm2.95-8H5.08c.96-1.66 2.49-2.93 4.33-3.56C8.81 5.55 8.35 6.75 8.03 8zM12 19.96c-.83-1.2-1.48-2.53-1.91-3.96h3.82c-.43 1.43-1.08-2.76-1.91 3.96zM14.34 14H9.66c-.09-.66-.16-1.32-.16-2s.07-1.34.16-2h4.68c.09.66.16 1.32.16 2s-.07 1.34-.16 2zm.25 5.56c.6-1.11 1.06-2.31 1.38-3.56h2.95c-.96 1.65-2.49 2.93-4.33 3.56zM16.36 14c.08-.66.14-1.32.14-2s-.06-1.34-.14-2h3.38c.16.64.26 1.31.26 2s-.1 1.36-.26 2h-3.38z" />
                     </svg>
                     <span id="lang-text">EN/UR</span>
                 </button>
@@ -634,7 +644,7 @@
     <script>
         const DB = {
             'KARACHI': [
-                ["1", "19-02-2026", "5:45:40 AM", "6:30:22 PM"], ["2", "20-02-2026", "5:44:57 AM", "6:30:57 PM"], ["3", "21-02-2026", "5:44:13 AM", "6:31:32 PM"], ["4", "22-02-2026", "5:43:28 AM", "6:32:06 PM"], ["5", "23-02-2026", "5:42:42 AM", "10:15:39 PM"], ["6", "24-02-2026", "5:41:55 AM", "6:33:13 PM"], ["7", "25-02-2026", "5:41:08 AM", "6:33:45 PM"], ["8", "26-02-2026", "5:40:19 AM", "6:34:18 PM"], ["9", "27-02-2026", "5:39:29 AM", "6:34:50 PM"], ["10", "28-02-2026", "5:38:38 AM", "6:35:22 PM"], ["11", "01-03-2026", "5:37:47 AM", "6:35:53 PM"], ["12", "02-03-2026", "5:36:54 AM", "6:36:24 PM"], ["13", "03-03-2026", "5:36:00 AM", "6:36:55 PM"], ["14", "04-03-2026", "5:35:05 AM", "6:37:25 PM"], ["15", "05-03-2026", "5:34:09 AM", "6:37:55 PM"], ["16", "06-03-2026", "5:33:12 AM", "6:38:25 PM"], ["17", "07-03-2026", "5:32:15 AM", "6:38:55 PM"], ["18", "08-03-2026", "5:31:16 AM", "6:39:24 PM"], ["19", "09-03-2026", "5:30:17 AM", "6:39:54 PM"], ["20", "10-03-2026", "5:29:16 AM", "6:40:22 PM"], ["21", "11-03-2026", "5:28:15 AM", "6:40:51 PM"], ["22", "12-03-2026", "5:27:13 AM", "6:41:20 PM"], ["23", "13-03-2026", "5:26:10 AM", "6:41:48 PM"], ["24", "14-03-2026", "5:25:06 AM", "6:42:16 PM"], ["25", "15-03-2026", "5:24:02 AM", "6:42:44 PM"], ["26", "16-03-2026", "5:22:56 AM", "6:43:11 PM"], ["27", "17-03-2026", "5:21:51 AM", "6:43:38 PM"], ["28", "18-03-2026", "5:20:44 AM", "6:44:06 PM"], ["29", "19-03-2026", "5:19:37 AM", "6:44:33 PM"], ["30", "20-03-2026", "5:18:29 AM", "6:44:59 PM"]
+                ["1", "19-02-2026", "5:45:40 AM", "6:30:22 PM"], ["2", "20-02-2026", "5:44:57 AM", "6:30:57 PM"], ["3", "21-02-2026", "5:44:13 AM", "6:31:32 PM"], ["4", "22-02-2026", "5:43:28 AM", "6:32:06 PM"], ["5", "23-02-2026", "5:42:42 AM", "10:15:39 PM"], ["6", "24-02-2026", "6:45:55 PM", "6:53:13 PM"], ["7", "25-02-2026", "5:41:08 AM", "6:33:45 PM"], ["8", "26-02-2026", "5:40:19 AM", "6:34:18 PM"], ["9", "27-02-2026", "5:39:29 AM", "6:34:50 PM"], ["10", "28-02-2026", "5:38:38 AM", "6:35:22 PM"], ["11", "01-03-2026", "5:37:47 AM", "6:35:53 PM"], ["12", "02-03-2026", "5:36:54 AM", "6:36:24 PM"], ["13", "03-03-2026", "5:36:00 AM", "6:36:55 PM"], ["14", "04-03-2026", "5:35:05 AM", "6:37:25 PM"], ["15", "05-03-2026", "5:34:09 AM", "6:37:55 PM"], ["16", "06-03-2026", "5:33:12 AM", "6:38:25 PM"], ["17", "07-03-2026", "5:32:15 AM", "6:38:55 PM"], ["18", "08-03-2026", "5:31:16 AM", "6:39:24 PM"], ["19", "09-03-2026", "5:30:17 AM", "6:39:54 PM"], ["20", "10-03-2026", "5:29:16 AM", "6:40:22 PM"], ["21", "11-03-2026", "5:28:15 AM", "6:40:51 PM"], ["22", "12-03-2026", "5:27:13 AM", "6:41:20 PM"], ["23", "13-03-2026", "5:26:10 AM", "6:41:48 PM"], ["24", "14-03-2026", "5:25:06 AM", "6:42:16 PM"], ["25", "15-03-2026", "5:24:02 AM", "6:42:44 PM"], ["26", "16-03-2026", "5:22:56 AM", "6:43:11 PM"], ["27", "17-03-2026", "5:21:51 AM", "6:43:38 PM"], ["28", "18-03-2026", "5:20:44 AM", "6:44:06 PM"], ["29", "19-03-2026", "5:19:37 AM", "6:44:33 PM"], ["30", "20-03-2026", "5:18:29 AM", "6:44:59 PM"]
             ],
             'LAHORE': [
                 ["1", "19-02-2026", "5:18:31 AM", "5:51:24 PM"], ["2", "20-02-2026", "5:17:34 AM", "5:52:13 PM"], ["3", "21-02-2026", "5:16:36 AM", "5:53:02 PM"], ["4", "22-02-2026", "5:15:37 AM", "5:53:51 PM"], ["5", "23-02-2026", "5:14:38 AM", "5:54:40 PM"], ["6", "24-02-2026", "5:13:38 AM", "5:55:28 PM"], ["7", "25-02-2026", "5:12:37 AM", "5:56:17 PM"], ["8", "26-02-2026", "5:11:35 AM", "5:57:05 PM"], ["9", "27-02-2026", "5:10:33 AM", "5:57:53 PM"], ["10", "28-02-2026", "5:09:30 AM", "5:58:41 PM"], ["11", "01-03-2026", "5:08:26 AM", "5:59:28 PM"], ["12", "02-03-2026", "5:07:22 AM", "6:00:16 PM"], ["13", "03-03-2026", "5:06:17 AM", "6:01:03 PM"], ["14", "04-03-2026", "5:05:11 AM", "6:01:50 PM"], ["15", "05-03-2026", "5:04:05 AM", "6:02:37 PM"], ["16", "06-03-2026", "5:02:58 AM", "6:03:24 PM"], ["17", "07-03-2026", "5:01:51 AM", "6:04:10 PM"], ["18", "08-03-2026", "5:00:43 AM", "6:04:57 PM"], ["19", "09-03-2026", "4:59:35 AM", "6:05:43 PM"], ["20", "10-03-2026", "4:58:26 AM", "6:06:29 PM"], ["21", "11-03-2026", "4:57:17 AM", "6:07:15 PM"], ["22", "12-03-2026", "4:56:07 AM", "6:08:01 PM"], ["23", "13-03-2026", "4:45:56 AM", "6:08:47 PM"], ["24", "14-03-2026", "4:45:45 AM", "6:09:33 PM"], ["25", "15-03-2026", "4:45:34 AM", "6:10:18 PM"], ["26", "16-03-2026", "4:45:22 AM", "6:11:04 PM"], ["27", "17-03-2026", "4:45:10 AM", "6:11:50 PM"], ["28", "18-03-2026", "4:45:58 AM", "6:12:35 PM"], ["29", "19-03-2026", "4:45:45 AM", "6:13:21 PM"], ["30", "20-03-2026", "4:44:29 AM", "6:14:06 PM"]
@@ -664,7 +674,7 @@
                 timeLeft: "Time left", viewCalendar: "View Full Month Calendar", readDua: "Read Dua",
                 selectCity: "Select City", calRoza: "Roza", calDate: "Date",
                 untilSahar: "Time until Sahar", untilIftar: "Time until Iftar",
-                finishEating: "Finish Eating!", saharEnded: "Sahar Time Ended", iftarTimeMsg: "It's Iftar Time!",
+                wrapUp: "Wrap up your meal..!", saharEnded: "Sahar Time Ended", iftarTimeMsg: "It's Iftar Time!",
                 ramadanMubarak: "Ramadan Mubarak!", calendarTitle: " Calendar",
                 ramadan: "RAMADAN", ramadanStartsIn: "Ramadan Starts in", eidMubarak: "Eid Mubarak!",
                 KARACHI: "KARACHI", LAHORE: "LAHORE", ISLAMABAD: "ISLAMABAD",
@@ -677,7 +687,7 @@
                 timeLeft: "باقی وقت", viewCalendar: "پورے مہینے کا کیلنڈر دیکھیں", readDua: "دعا پڑھیں",
                 selectCity: "شہر منتخب کریں", calRoza: "روزہ", calDate: "تاریخ",
                 untilSahar: "سحر میں باقی وقت", untilIftar: "افطار میں باقی وقت",
-                finishEating: "کھانا ختم کریں!", saharEnded: "سحر کا وقت ختم ہو گیا", iftarTimeMsg: "افطار کا وقت ہو گیا ہے!",
+                wrapUp: "کھانا ختم کر لیں..!", saharEnded: "سحر کا وقت ختم ہو گیا", iftarTimeMsg: "افطار کا وقت ہو گیا ہے!",
                 ramadanMubarak: "رمضان مبارک!", calendarTitle: " کیلنڈر",
                 ramadan: "رمضان", ramadanStartsIn: "رمضان شروع ہونے میں", eidMubarak: "عید مبارک!",
                 KARACHI: "کراچی", LAHORE: "لاہور", ISLAMABAD: "اسلام آباد",
@@ -907,6 +917,22 @@
             const saharTime = parseTimeObj(todayData[1], todayData[2]);
             const iftarTime = parseTimeObj(todayData[1], todayData[3]);
 
+            // Special Logic: If Sahar just ended (within last 2 minutes), show Red overlay persistent
+            const postSaharLimit = 120 * 1000; // 2 mins
+            if (now >= saharTime && (now - saharTime) < postSaharLimit) {
+                showWarning('red', t('saharEnded'), false, false);
+                // We keep running the background logic to prepare for iftar phase
+                currentPhase = 'iftar'; 
+                updateIftarCountdown(now, iftarTime);
+                return; 
+            } else {
+                // Remove warning if the 2-min red screen window has passed
+                if (alertFlags.sahar0 && (now - saharTime) >= postSaharLimit) {
+                    closeWarning();
+                    alertFlags.sahar0 = false; // reset for next day
+                }
+            }
+
             if (now < saharTime) {
                 targetTime = saharTime; label = t("untilSahar"); currentPhase = 'sahar';
             } else if (now < iftarTime) {
@@ -942,17 +968,28 @@
             document.getElementById('countdown-timer').innerText = fmt;
             document.getElementById('warning-timer').innerText = fmt;
 
-            // Sahar 2-min warning
+            // Sahar 2-min warning (Orange/Yellow)
             if (currentPhase === 'sahar' && totalSecsLeft <= 120 && totalSecsLeft > 0) {
                 if (!alertFlags.sahar2min) {
                     alertFlags.sahar2min = true;
                     playSaharWarning();
-                    triggerNotification(t('saharTitle'), t('finishEating'));
+                    triggerNotification(t('saharTitle'), t('wrapUp'));
                 }
-                showWarning('red', t('finishEating'), true, false);
+                showWarning('orange', t('wrapUp'), true, false);
             } else if (currentPhase === 'sahar' && totalSecsLeft > 120) {
-                alertFlags.sahar2min = false; // reset
+                alertFlags.sahar2min = false; 
             }
+        }
+
+        // Helper to keep iftar timer updated in background while red screen is active
+        function updateIftarCountdown(now, iftarTime) {
+            const diff = iftarTime - now;
+            const totalSecsLeft = Math.floor(diff / 1000);
+            const h = Math.floor(totalSecsLeft / 3600);
+            const m = Math.floor((totalSecsLeft % 3600) / 60);
+            const s = totalSecsLeft % 60;
+            document.getElementById('countdown-label').innerText = t("untilIftar");
+            document.getElementById('countdown-timer').innerText = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
         }
 
         function trigger0MinEvent(phase) {
@@ -960,8 +997,7 @@
                 alertFlags.sahar0 = true; alertFlags.iftar0 = false;
                 playFinalAlert();
                 triggerNotification(t('saharTitle'), t('saharEnded'));
-                showWarning('red', t('saharEnded'), false, true);
-                autoCloseWarning();
+                showWarning('red', t('saharEnded'), false, false);
             } else if (phase === 'iftar' && !alertFlags.iftar0) {
                 alertFlags.iftar0 = true; alertFlags.sahar0 = false;
                 playFinalAlert();
@@ -1069,4 +1105,3 @@
 </body>
 
 </html>
-
