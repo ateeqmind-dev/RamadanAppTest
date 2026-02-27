@@ -6,352 +6,480 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sahar & Iftar Timings</title>
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#064E3B">
+    <meta name="theme-color" content="#0F3738">
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2290/2290073.png">
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&display=swap');
 
         :root {
-            --primary: #064e3b; /* Deep Emerald */
-            --accent: #d97706;  /* Warm Gold */
-            --bg-gradient: linear-gradient(180deg, #064e3b 0%, #0a2f26 100%);
-            --surface: rgba(255, 255, 255, 0.95);
-            --card-bg: #f1f5f9; /* Fix 1: Variable for city picker bg */
-            --box-bg: #f8fafc;  /* Fix 1: Variable for time box bg */
-            --glass: rgba(255, 255, 255, 0.1);
-            --text-main: #1f2937;
-            --text-muted: #6b7280;
-            --cal-link: #064e3b; /* Fix 3: Variable for calendar link */
-            --white: #ffffff;
-            --radius-lg: 28px;
-            --radius-md: 18px;
-            --font-main: 'Plus Jakarta Sans', sans-serif;
+            --bg-top: #0F3738;
+            --bg-bottom: #FDF9F1;
+            --gold: #D7AE5D;
+            --text-dark: #0F3738;
+            --text-light: #ffffff;
+            --surface: #ffffff;
+            --border: rgba(15, 55, 56, 0.1);
+            --modal-border: #ddd;
+            --body-bg: #e5e5e5;
+            --font-main: 'Poppins', sans-serif;
+            --font-urdu: 'Noto Nastaliq Urdu', serif;
         }
 
         [data-theme="dark"] {
-            --primary: #052e21;
-            --bg-gradient: linear-gradient(180deg, #020617 0%, #0f172a 100%);
-            --surface: #1e293b;
-            --card-bg: #334155; /* Fix 1: Dark background for city picker */
-            --box-bg: #1e293b;  /* Fix 1: Dark background for time box */
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --cal-link: #fbbf24; /* Fix 3: Lighter color for calendar link in dark mode */
-            --glass: rgba(255, 255, 255, 0.05);
+            --bg-top: #0a2425;
+            --bg-bottom: #121212;
+            --text-dark: #f0f0f0;
+            --text-light: #e0e0e0;
+            --surface: #1e1e1e;
+            --border: rgba(255, 255, 255, 0.1);
+            --modal-border: #333;
+            --body-bg: #000000;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
         body {
             font-family: var(--font-main);
-            background: #020617;
+            background-color: var(--body-bg);
             display: flex;
             justify-content: center;
-            min-height: 100vh;
-            color: var(--text-main);
-            overflow: hidden; /* Fix 4: Prevent overall body scroll */
+            height: 100vh;
+            height: 100dvh;
+            overflow: hidden;
+            transition: background-color 0.3s ease;
         }
 
-        /* Fix 4: Font size adjustments for Urdu to keep layout compact */
-        body.lang-ur { font-family: 'Noto Nastaliq Urdu', serif; }
-        body.lang-ur .islamic-date { font-size: 24px; }
-        body.lang-ur .countdown-timer { font-size: 54px; }
-        body.lang-ur .bottom-shelf { padding: 20px 24px 20px; }
-        body.lang-ur .time-box { padding: 10px 15px; }
+        body.lang-ur {
+            font-family: var(--font-urdu);
+            direction: ltr;
+        }
 
         .app-container {
             width: 100%;
-            max-width: 480px;
-            background: var(--bg-gradient);
+            max-width: 450px;
+            height: 100%;
+            background-color: var(--bg-bottom);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
             position: relative;
-            display: flex;
-            flex-direction: column;
-            height: 100vh; /* Fix 4: Hard height to ensure it fits one screen */
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             overflow: hidden;
-        }
-
-        /* --- MODERN TOP BAR --- */
-        .top-nav {
-            padding: 15px 24px; /* Fix 4: Slightly reduced padding */
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 10;
-        }
-
-        .nav-btn {
-            background: var(--glass);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            padding: 10px;
-            border-radius: 14px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-        }
-
-        .nav-btn:active { transform: scale(0.9); }
-        .nav-btn svg { width: 20px; height: 20px; fill: var(--white); }
-        .lang-toggle { color: var(--white); font-weight: 700; font-size: 13px; padding: 10px 15px; }
-
-        /* --- HEADER SECTION --- */
-        .header {
-            text-align: center;
-            padding: 5px 24px 15px; /* Fix 4: Reduced padding */
-            color: var(--white);
-        }
-
-        .islamic-date {
-            font-size: 32px;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-            margin-bottom: 4px;
-        }
-
-        .english-date {
-            font-size: 15px;
-            opacity: 0.7;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        /* --- COUNTDOWN CENTERPIECE --- */
-        .main-display {
-            flex-grow: 1;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 0 24px;
-            position: relative;
+            transition: background-color 0.3s ease;
         }
 
-        .countdown-card {
-            background: var(--glass);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(20px);
-            width: 100%;
-            padding: 30px 20px; /* Fix 4: Reduced padding */
-            border-radius: var(--radius-lg);
-            text-align: center;
-            color: var(--white);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-        }
-
-        .countdown-label {
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-weight: 700;
-            color: var(--accent);
-            margin-bottom: 12px;
-        }
-
-        .countdown-timer {
-            font-size: 64px;
-            font-weight: 800;
-            font-variant-numeric: tabular-nums;
-            line-height: 1;
-        }
-
-        /* --- TIMING GRID --- */
-        .bottom-shelf {
-            background: var(--surface);
-            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-            padding: 24px 24px 30px; /* Fix 4: Reduced padding */
-            margin-top: 10px;
-        }
-
-        .city-picker {
-            background: var(--card-bg); /* Fix 1: Now using theme variable */
-            padding: 14px 20px;
-            border-radius: 16px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px; /* Fix 4: Reduced margin */
-            cursor: pointer;
-            border: 1px solid rgba(0,0,0,0.05);
-        }
-
-        .city-info h4 { font-size: 16px; color: var(--text-main); font-weight: 700; }
-        .city-info p { font-size: 12px; color: var(--text-muted); font-weight: 500; }
-
-        .timings-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px; /* Fix 4: Reduced gap */
-            margin-bottom: 16px;
-        }
-
-        .time-box {
-            background: var(--box-bg); /* Fix 1: Now using theme variable */
-            border: 1px solid rgba(0,0,0,0.05);
-            padding: 15px 10px; /* Fix 4: Compact padding */
-            border-radius: 20px;
-            text-align: center;
-            transition: transform 0.2s;
-        }
-
-        .time-box:active { transform: scale(0.98); }
-        .time-box h2 { font-size: 13px; color: var(--accent); font-weight: 800; letter-spacing: 1px; margin-bottom: 8px; }
-        .time-box .time { font-size: 18px; color: var(--text-main); font-weight: 800; margin-bottom: 10px; }
-
-        .dua-pill {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 10px;
-            font-size: 11px;
-            font-weight: 700;
-            cursor: pointer;
-        }
-
-        .cal-link {
-            display: block;
-            text-align: center;
-            color: var(--cal-link); /* Fix 3: Now using theme variable */
-            font-weight: 700;
-            font-size: 14px;
-            text-decoration: none;
-            margin-top: 5px;
-        }
-
-        /* --- MODERNIZED WARNING OVERLAYS --- */
+        /* WARNING OVERLAYS */
         .warning-overlay {
-            position: fixed;
+            position: absolute;
             inset: 0;
-            z-index: 5000;
+            z-index: 200;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             opacity: 0;
             pointer-events: none;
-            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-            backdrop-filter: blur(0px);
-            padding: 30px;
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
             text-align: center;
+            padding: 30px;
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            transform: scale(1.1);
         }
 
         .warning-overlay.active {
             opacity: 1;
             pointer-events: auto;
-            backdrop-filter: blur(15px);
-            background: rgba(0, 0, 0, 0.4);
+            transform: scale(1);
         }
 
-        .warning-card {
-            background: var(--surface);
-            padding: 40px 30px;
-            border-radius: 40px;
-            width: 100%;
-            max-width: 380px;
-            transform: translateY(30px) scale(0.9);
-            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+        .warning-overlay.orange {
+            background: radial-gradient(circle, rgba(255, 193, 7, 0.2) 0%, rgba(0, 0, 0, 0.85) 100%);
+            color: #ffca28;
+            border: 1px solid rgba(255, 202, 40, 0.3);
+        }
+        
+        .warning-overlay.red {
+            background: radial-gradient(circle, rgba(255, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.8) 100%);
+            color: #ff4d4d;
+            animation: pulse-red 2s infinite;
+        }
+
+        .warning-overlay.green {
+            background: radial-gradient(circle, rgba(0, 255, 127, 0.2) 0%, rgba(0, 0, 0, 0.8) 100%);
+            color: #2ecc71;
+            animation: pulse-green 2s infinite;
+        }
+
+        @keyframes pulse-red {
+            0% { background-color: rgba(255, 0, 0, 0.1); }
+            50% { background-color: rgba(255, 0, 0, 0.3); }
+            100% { background-color: rgba(255, 0, 0, 0.1); }
+        }
+
+        @keyframes pulse-green {
+            0% { background-color: rgba(0, 255, 127, 0.1); }
+            50% { background-color: rgba(0, 255, 127, 0.3); }
+            100% { background-color: rgba(0, 255, 127, 0.1); }
+        }
+
+        .warning-text {
+            font-size: clamp(32px, 9vw, 42px);
+            font-weight: 700;
+            margin-bottom: 20px;
+            line-height: 1.2;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .warning-timer {
+            font-size: clamp(48px, 12vw, 64px);
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+            font-family: var(--font-main);
+            background: rgba(0,0,0,0.1);
+            padding: 10px 30px;
+            border-radius: 50px;
+        }
+
+        .warning-close-btn {
+            margin-top: 40px;
+            padding: 12px 40px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            color: inherit;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: background 0.3s;
+        }
+
+        .warning-close-btn:hover { background: rgba(255, 255, 255, 0.25); }
+
+        /* TOP SECTION */
+        .top-section {
+            background-color: var(--bg-top);
+            color: var(--text-light);
+            text-align: center;
+            padding: 2vh 20px 3vh;
+            position: relative;
+            border-bottom: 4px solid var(--gold);
+            transition: background-color 0.3s ease;
+        }
+
+        .top-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .icon-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
             display: flex;
             flex-direction: column;
             align-items: center;
-            border: 1px solid rgba(255,255,255,0.1);
+            gap: 4px;
+            color: var(--gold);
+            font-family: var(--font-main);
+            font-weight: 600;
+            font-size: 10px;
+            text-transform: uppercase;
         }
 
-        .warning-overlay.active .warning-card {
-            transform: translateY(0) scale(1);
+        .icon-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--gold);
+            transition: transform 0.3s ease;
         }
 
-        /* Dynamic States */
-        .orange .warning-card { border-bottom: 8px solid #f59e0b; }
-        .red .warning-card { border-bottom: 8px solid #ef4444; animation: card-pulse-red 2s infinite; }
-        .green .warning-card { border-bottom: 8px solid #10b981; animation: card-pulse-green 2s infinite; }
-
-        .warning-text { 
-            font-size: 28px; 
-            font-weight: 800; 
-            line-height: 1.2; 
-            margin-bottom: 20px; 
-            color: var(--text-main); 
-        }
-        
-        .warning-timer { 
-            font-size: 48px; 
-            font-weight: 800; 
-            font-variant-numeric: tabular-nums; 
-            color: var(--text-main);
-            background: #f1f5f9;
-            padding: 15px 30px;
-            border-radius: 24px;
-            margin: 10px 0;
+        .mosque-icon svg {
+            width: 45px;
+            height: auto;
+            fill: var(--gold);
+            margin-bottom: 1.5vh;
         }
 
-        @keyframes card-pulse-red { 0%, 100% { box-shadow: 0 30px 60px rgba(239, 68, 68, 0.2); } 50% { box-shadow: 0 30px 80px rgba(239, 68, 68, 0.4); } }
-        @keyframes card-pulse-green { 0%, 100% { box-shadow: 0 30px 60px rgba(16, 185, 129, 0.2); } 50% { box-shadow: 0 30px 80px rgba(16, 185, 129, 0.4); } }
+        .islamic-date {
+            font-size: clamp(22px, 6.5vw, 28px);
+            font-weight: 700;
+            margin-bottom: 2px;
+            font-family: var(--font-main);
+            direction: ltr;
+        }
 
-        /* --- MODALS --- */
+        .english-date {
+            font-size: clamp(14px, 4vw, 16px);
+            font-weight: 400;
+            margin-bottom: 6px;
+            font-family: var(--font-main);
+            direction: ltr;
+            opacity: 0.85;
+        }
+
+        .day-display {
+            font-size: 14px;
+            font-weight: 300;
+            letter-spacing: 1px;
+            color: #ccc;
+        }
+
+        /* BOTTOM SECTION */
+        .bottom-section {
+            padding: 2vh 20px;
+            text-align: center;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+        }
+
+        .title-text {
+            color: var(--text-dark);
+            font-weight: 700;
+            font-size: clamp(16px, 5vw, 20px);
+            transition: color 0.3s ease;
+        }
+
+        .city-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .city-selector {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 8px 20px;
+            border: 1.5px solid var(--gold);
+            border-radius: 30px;
+            color: var(--text-dark);
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 4px;
+            background: transparent;
+            font-size: 16px;
+            transition: color 0.3s ease;
+            font-family: inherit;
+        }
+
+        .city-selector svg {
+            width: 16px;
+            fill: var(--text-dark);
+            transition: fill 0.3s ease;
+        }
+
+        .city-hint {
+            font-size: 11px;
+            color: var(--text-dark);
+            opacity: 0.6;
+            font-weight: 400;
+            transition: color 0.3s ease;
+        }
+
+        .timings-wrapper {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .timing-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5vh 5px;
+            flex: 1;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .timing-box h2 {
+            font-size: 16px;
+            color: var(--gold);
+            margin-bottom: 4px;
+            font-weight: 700;
+        }
+
+        .timing-box .time {
+            font-size: clamp(16px, 4.5vw, 19px);
+            color: var(--text-dark);
+            font-weight: 700;
+            font-family: var(--font-main);
+            direction: ltr;
+        }
+
+        .dua-btn {
+            margin-top: 10px;
+            padding: 4px 12px;
+            background: rgba(215, 174, 93, 0.15);
+            color: var(--gold);
+            border: 1px solid var(--gold);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            transition: background 0.2s;
+        }
+
+        .countdown-box {
+            background: var(--bg-top);
+            color: white;
+            border-radius: 12px;
+            padding: 2vh 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .countdown-label {
+            font-size: 13px;
+            color: var(--gold);
+            margin-bottom: 6px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .countdown-timer {
+            font-size: clamp(26px, 8vw, 32px);
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+            font-family: var(--font-main);
+            direction: ltr;
+        }
+
+        .calendar-btn {
+            background: transparent;
+            color: var(--text-dark);
+            border: none;
+            text-decoration: underline;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            padding: 10px;
+            font-family: inherit;
+        }
+
+        /* Modals */
         .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(2, 6, 23, 0.85);
-            backdrop-filter: blur(8px);
-            z-index: 2000;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
             display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
             padding: 20px;
-            align-items: flex-end; /* Mobile style: slide from bottom */
         }
 
         .modal-content {
-            background: var(--surface);
+            background: var(--bg-bottom);
             width: 100%;
-            max-width: 440px;
-            margin: 0 auto;
-            border-radius: var(--radius-lg);
-            padding: 30px 24px;
-            position: relative;
-            max-height: 85vh;
+            max-height: 90%;
+            border-radius: 16px;
+            padding: 20px;
             overflow-y: auto;
-            animation: slideUp 0.3s ease-out;
+            position: relative;
         }
 
-        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--bg-top);
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 10;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .city-list { list-style: none; margin-top: 20px; }
 
         .city-list li {
-            padding: 18px;
-            background: var(--box-bg);
-            color: var(--text-main);
-            margin-bottom: 12px;
-            border-radius: 16px;
-            font-weight: 700;
-            list-style: none;
+            padding: 15px;
+            border-bottom: 1px solid var(--modal-border);
+            font-weight: 600;
+            color: var(--text-dark);
             text-align: center;
-            border: 1px solid rgba(0,0,0,0.05);
+            cursor: pointer;
         }
 
-        .dua-arabic { font-size: 28px; line-height: 1.8; text-align: center; margin: 20px 0; color: var(--primary); direction: rtl; }
-
-        .calendar-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        .calendar-table th { background: var(--card-bg); color: var(--text-main); padding: 12px; font-size: 12px; font-weight: 700; }
-        .calendar-table td { padding: 12px; border-bottom: 1px solid rgba(0,0,0,0.05); font-size: 13px; text-align: center; color: var(--text-main); }
-        .active-day { background: #fef3c7 !important; font-weight: 800; color: var(--accent) !important; }
-        [data-theme="dark"] .active-day { background: #451a03 !important; }
-
-        .close-x { position: absolute; top: 20px; right: 20px; font-size: 24px; cursor: pointer; color: var(--text-muted); }
-
-        .credit { 
-            text-align: center; 
-            padding: 15px; 
-            color: var(--text-muted); /* Fix 2: Changed from var(--white) to theme variable */
-            font-size: 11px; 
-            opacity: 0.8; 
-            letter-spacing: 1px; 
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            margin-top: 20px;
+            direction: ltr;
         }
 
+        .calendar-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: clamp(11px, 3.5vw, 14px);
+            font-family: var(--font-main);
+        }
+
+        .calendar-table th, .calendar-table td {
+            border: 1px solid var(--modal-border);
+            padding: 8px 4px;
+            text-align: center;
+            color: var(--text-dark);
+            white-space: nowrap;
+        }
+
+        .calendar-table th { background: var(--bg-top); color: white; }
+
+        .active-day { background-color: rgba(215, 174, 93, 0.4) !important; font-weight: bold; }
+
+        .dua-arabic {
+            font-family: 'Amiri', serif, sans-serif;
+            font-size: 26px;
+            line-height: 2;
+            text-align: center;
+            color: var(--text-dark);
+            margin: 20px 0;
+            direction: rtl;
+            font-weight: bold;
+        }
+
+        .dua-trans {
+            text-align: center;
+            color: var(--text-dark);
+            font-size: 14px;
+            opacity: 0.8;
+            margin-bottom: 10px;
+        }
+
+        .credit {
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-dark);
+            opacity: 0.7;
+            padding: 5px 0 15px;
+            flex-shrink: 0;
+        }
     </style>
 </head>
 
@@ -360,105 +488,107 @@
     <div class="app-container">
 
         <div id="warning-layer" class="warning-overlay">
-            <div class="warning-card">
-                <div id="warning-icon" style="font-size: 50px; margin-bottom: 15px;">⚠️</div>
-                <div id="warning-text" class="warning-text"></div>
-                <div id="warning-timer" class="warning-timer"></div>
-                <button id="warning-close" class="dua-pill" style="margin-top:25px; padding:18px; width:100%; border-radius:20px; font-size:16px; display:none;" onclick="closeWarning()">CONTINUE</button>
+            <div id="warning-text" class="warning-text"></div>
+            <div id="warning-timer" class="warning-timer"></div>
+            <button id="warning-close" class="warning-close-btn" style="display:none;" onclick="closeWarning()">Close / بند کریں</button>
+        </div>
+
+        <div class="top-section">
+            <div class="top-controls">
+                <button class="icon-btn" onclick="toggleTheme()">
+                    <svg id="theme-icon" viewBox="0 0 24 24"></svg>
+                    <span data-i18n="theme">Theme</span>
+                </button>
+                <button class="icon-btn" onclick="toggleAudio()">
+                    <svg id="audio-icon" viewBox="0 0 24 24"></svg>
+                    <span data-i18n="audio">Sound</span>
+                </button>
+                <button class="icon-btn" onclick="toggleLang()">
+                    <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm6.93 6h-2.95c-.32-1.25-.78-2.45-1.38-3.56 1.84.63 3.37 1.91 4.33 3.56zM12 4.04c.83 1.2 1.48 2.53 1.91 3.96h-3.82c.43-1.43 1.08-2.76 1.91-3.96zM4.26 14C4.1 13.36 4 12.69 4 12s.1-1.36.26-2h3.38c-.08.66-.14 1.32-.14 2s.06 1.34.14 2H4.26zm.82 2h2.95c.32 1.25.78 2.45 1.38 3.56-1.84-.63-3.37-1.9-4.33-3.56zm2.95-8H5.08c.96-1.66 2.49-2.93 4.33-3.56C8.81 5.55 8.35 6.75 8.03 8zM12 19.96c-.83-1.2-1.48-2.53-1.91-3.96h3.82c-.43 1.43-1.08-2.76-1.91-3.96zM14.34 14H9.66c-.09-.66-.16-1.32-.16-2s.07-1.34.16-2h4.68c.09.66.16 1.32.16 2s-.07 1.34-.16 2zm.25 5.56c.6-1.11 1.06-2.31 1.38-3.56h2.95c-.96 1.65-2.49 2.93-4.33 3.56zM16.36 14c.08-.66.14-1.32.14-2s-.06-1.34-.14-2h3.38c.16.64.26 1.31.26 2s-.1 1.36-.26 2h-3.38z" /></svg>
+                    <span id="lang-text">EN/UR</span>
+                </button>
             </div>
-        </div>
 
-        <div class="top-nav">
-            <button class="nav-btn" onclick="toggleTheme()" title="Toggle Theme">
-                <svg id="theme-icon" viewBox="0 0 24 24"></svg>
-            </button>
-            <button class="nav-btn lang-toggle" onclick="toggleLang()" id="lang-text">URDU</button>
-            <button class="nav-btn" onclick="toggleAudio()" title="Sound Settings">
-                <svg id="audio-icon" viewBox="0 0 24 24"></svg>
-            </button>
-        </div>
-
-        <div class="header">
+            <div class="mosque-icon">
+                <svg viewBox="0 0 24 24"><path d="M12 2C10.89 2 10 2.89 10 4V4.5C8.82 5.06 8 6.42 8 8V12H4V14H6V22H18V14H20V12H16V8C16 6.42 15.18 5.06 14 4.5V4C14 2.89 13.11 2 12 2M12 4C12.55 4 13 4.45 13 5V5.5C13 5.5 13 6 12 6C11 6 11 5.5 11 5.5V5C11 4.45 11.45 4 12 4M12 7C14.21 7 16 8.79 16 11V12H8V11C8 8.79 9.79 7 12 7Z" /></svg>
+            </div>
             <div class="islamic-date" id="islamic-date">--</div>
             <div class="english-date" id="english-date">--</div>
-            <div style="font-size:12px; opacity:0.6; margin-top:5px" id="day-display">--</div>
+            <div class="day-display" id="day-display">--</div>
         </div>
 
-        <div class="main-display">
-            <div class="countdown-card">
-                <div class="countdown-label" id="countdown-label">--</div>
+        <div class="bottom-section">
+            <div class="title-text" data-i18n="mainTitle">SAHAR-O-IFTAR TIMING</div>
+
+            <div class="city-wrapper">
+                <button class="city-selector" onclick="openCityModal()">
+                    <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" /></svg>
+                    <span id="selected-city">KARACHI</span>
+                </button>
+                <span class="city-hint" data-i18n="cityHint">Click on city name to change</span>
+            </div>
+
+            <div class="timings-wrapper">
+                <div class="timing-box">
+                    <h2 data-i18n="saharTitle">SAHAR</h2>
+                    <div class="time" id="sahar-time">--:--:--</div>
+                    <button class="dua-btn" data-i18n="readDua" onclick="openDuaModal('sahar')">Read Dua</button>
+                </div>
+                <div class="timing-box">
+                    <h2 data-i18n="iftarTitle">IFTAR</h2>
+                    <div class="time" id="iftar-time">--:--:--</div>
+                    <button class="dua-btn" data-i18n="readDua" onclick="openDuaModal('iftar')">Read Dua</button>
+                </div>
+            </div>
+
+            <div class="countdown-box">
+                <div class="countdown-label" id="countdown-label" data-i18n="timeLeft">Time left</div>
                 <div class="countdown-timer" id="countdown-timer">00:00:00</div>
             </div>
+
+            <button class="calendar-btn" data-i18n="viewCalendar" onclick="openCalendarModal()">View Full Month Calendar</button>
         </div>
 
-        <div class="bottom-shelf">
-            <div class="city-picker" onclick="openCityModal()">
-                <div class="city-info">
-                    <p data-i18n="cityHint">Your Location</p>
-                    <h4 id="selected-city">KARACHI</h4>
-                </div>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-            </div>
-
-            <div class="timings-grid">
-                <div class="time-box">
-                    <h2 data-i18n="saharTitle">SAHAR</h2>
-                    <div class="time" id="sahar-time">--:--</div>
-                    <button class="dua-pill" onclick="openDuaModal('sahar')">DUA</button>
-                </div>
-                <div class="time-box">
-                    <h2 data-i18n="iftarTitle">IFTAR</h2>
-                    <div class="time" id="iftar-time">--:--</div>
-                    <button class="dua-pill" onclick="openDuaModal('iftar')">DUA</button>
-                </div>
-            </div>
-
-            <a href="javascript:void(0)" class="cal-link" onclick="openCalendarModal()" data-i18n="viewCalendar">Full Ramadan Calendar</a>
-            
-            <div class="credit">DESIGNED BY ATEEQ</div>
-        </div>
-
-    </div>
-
-    <div class="modal-overlay" id="city-modal">
-        <div class="modal-content">
-            <span class="close-x" onclick="closeModals()">✕</span>
-            <h3 style="margin-bottom:20px; text-align:center" data-i18n="selectCity">Select Your City</h3>
-            <ul class="city-list">
-                <li onclick="changeCity('KARACHI')" data-i18n-city="KARACHI">KARACHI</li>
-                <li onclick="changeCity('LAHORE')" data-i18n-city="LAHORE">LAHORE</li>
-                <li onclick="changeCity('ISLAMABAD')" data-i18n-city="ISLAMABAD">ISLAMABAD</li>
-            </ul>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="dua-modal">
-        <div class="modal-content">
-            <span class="close-x" onclick="closeModals()">✕</span>
-            <h3 id="dua-title" style="text-align:center">Dua</h3>
-            <div class="dua-arabic" id="dua-arabic-text"></div>
-            <div id="dua-translation" style="text-align:center; color:var(--text-muted); font-size:14px; line-height:1.6"></div>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="calendar-modal">
-        <div class="modal-content">
-            <span class="close-x" onclick="closeModals()">✕</span>
-            <h3 id="cal-title" style="text-align:center; margin-bottom:15px">Ramadan Calendar</h3>
-            <div style="overflow-x:auto">
-                <table class="calendar-table">
-                    <thead>
-                        <tr><th data-i18n="calRoza">Roza</th><th data-i18n="calDate">Date</th><th data-i18n="saharTitle">Sahar</th><th data-i18n="iftarTitle">Iftar</th></tr>
-                    </thead>
-                    <tbody id="calendar-body"></tbody>
-                </table>
+        <div class="modal-overlay" id="city-modal">
+            <div class="modal-content">
+                <button class="close-btn" onclick="closeModals()">✕</button>
+                <h3 style="text-align:center;" data-i18n="selectCity">Select City</h3>
+                <ul class="city-list">
+                    <li onclick="changeCity('KARACHI')" data-i18n-city="KARACHI">KARACHI</li>
+                    <li onclick="changeCity('LAHORE')" data-i18n-city="LAHORE">LAHORE</li>
+                    <li onclick="changeCity('ISLAMABAD')" data-i18n-city="ISLAMABAD">ISLAMABAD</li>
+                </ul>
             </div>
         </div>
+
+        <div class="modal-overlay" id="calendar-modal">
+            <div class="modal-content">
+                <button class="close-btn" onclick="closeModals()">✕</button>
+                <h3 style="text-align:center;" id="cal-title">Ramadan Calendar</h3>
+                <div class="table-responsive">
+                    <table class="calendar-table">
+                        <thead><tr><th data-i18n="calRoza">Roza</th><th data-i18n="calDate">Date</th><th data-i18n="saharTitle">Sahar</th><th data-i18n="iftarTitle">Iftar</th></tr></thead>
+                        <tbody id="calendar-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-overlay" id="dua-modal">
+            <div class="modal-content">
+                <button class="close-btn" onclick="closeModals()">✕</button>
+                <h3 style="text-align:center;" id="dua-title">Dua</h3>
+                <div class="dua-arabic" id="dua-arabic-text"></div>
+                <div class="dua-trans" id="dua-translation"></div>
+            </div>
+        </div>
+
+        <div class="credit">App by Ateeq</div>
     </div>
 
     <script>
         const DB = {
-            'KARACHI': [["1", "19-02-2026", "5:45:40 AM", "6:30:22 PM"], ["2", "20-02-2026", "5:44:57 AM", "6:30:57 PM"], ["3", "21-02-2026", "5:44:13 AM", "6:31:32 PM"], ["4", "22-02-2026", "5:43:28 AM", "6:32:06 PM"], ["5", "23-02-2026", "5:42:42 AM", "6:32:40 PM"], ["6", "24-02-2026", "5:41:55 AM", "6:33:13 PM"], ["7", "25-02-2026", "5:41:08 AM", "6:33:45 PM"], ["8", "26-02-2026", "10:55:00 PM", "10:58:30 PM"], ["9", "27-02-2026", "5:00:29 AM", "5:04:10 AM"], ["10", "28-02-2026", "5:38:38 AM", "6:35:22 PM"], ["11", "01-03-2026", "5:37:47 AM", "6:35:53 PM"], ["12", "02-03-2026", "5:36:54 AM", "6:36:24 PM"], ["13", "03-03-2026", "5:36:00 AM", "6:36:55 PM"], ["14", "04-03-2026", "5:35:05 AM", "6:37:25 PM"], ["15", "05-03-2026", "5:34:09 AM", "6:37:55 PM"], ["16", "06-03-2026", "5:33:12 AM", "6:38:25 PM"], ["17", "07-03-2026", "5:32:15 AM", "6:38:55 PM"], ["18", "08-03-2026", "5:31:16 AM", "6:39:24 PM"], ["19", "09-03-2026", "5:30:17 AM", "6:39:54 PM"], ["20", "10-03-2026", "5:29:16 AM", "6:40:22 PM"], ["21", "11-03-2026", "5:28:15 AM", "6:40:51 PM"], ["22", "12-03-2026", "5:27:13 AM", "6:41:20 PM"], ["23", "13-03-2026", "5:26:10 AM", "6:41:48 PM"], ["24", "14-03-2026", "5:25:06 AM", "6:42:16 PM"], ["25", "15-03-2026", "5:24:02 AM", "6:42:44 PM"], ["26", "16-03-2026", "5:22:56 AM", "6:43:11 PM"], ["27", "17-03-2026", "5:21:51 AM", "6:43:38 PM"], ["28", "18-03-2026", "5:20:44 AM", "6:44:06 PM"], ["29", "19-03-2026", "5:19:37 AM", "6:44:33 PM"], ["30", "20-03-2026", "5:18:29 AM", "6:44:59 PM"]],
+            'KARACHI': [["1", "19-02-2026", "5:45:40 AM", "6:30:22 PM"], ["2", "20-02-2026", "5:44:57 AM", "6:30:57 PM"], ["3", "21-02-2026", "5:44:13 AM", "6:31:32 PM"], ["4", "22-02-2026", "5:43:28 AM", "6:32:06 PM"], ["5", "23-02-2026", "5:42:42 AM", "6:32:40 PM"], ["6", "24-02-2026", "5:41:55 AM", "6:33:13 PM"], ["7", "25-02-2026", "5:41:08 AM", "6:33:45 PM"], ["8", "26-02-2026", "10:45:30 PM", "10:47:20 PM"], ["9", "27-02-2026", "5:39:29 AM", "6:34:50 PM"], ["10", "28-02-2026", "5:38:38 AM", "6:35:22 PM"], ["11", "01-03-2026", "5:37:47 AM", "6:35:53 PM"], ["12", "02-03-2026", "5:36:54 AM", "6:36:24 PM"], ["13", "03-03-2026", "5:36:00 AM", "6:36:55 PM"], ["14", "04-03-2026", "5:35:05 AM", "6:37:25 PM"], ["15", "05-03-2026", "5:34:09 AM", "6:37:55 PM"], ["16", "06-03-2026", "5:33:12 AM", "6:38:25 PM"], ["17", "07-03-2026", "5:32:15 AM", "6:38:55 PM"], ["18", "08-03-2026", "5:31:16 AM", "6:39:24 PM"], ["19", "09-03-2026", "5:30:17 AM", "6:39:54 PM"], ["20", "10-03-2026", "5:29:16 AM", "6:40:22 PM"], ["21", "11-03-2026", "5:28:15 AM", "6:40:51 PM"], ["22", "12-03-2026", "5:27:13 AM", "6:41:20 PM"], ["23", "13-03-2026", "5:26:10 AM", "6:41:48 PM"], ["24", "14-03-2026", "5:25:06 AM", "6:42:16 PM"], ["25", "15-03-2026", "5:24:02 AM", "6:42:44 PM"], ["26", "16-03-2026", "5:22:56 AM", "6:43:11 PM"], ["27", "17-03-2026", "5:21:51 AM", "6:43:38 PM"], ["28", "18-03-2026", "5:20:44 AM", "6:44:06 PM"], ["29", "19-03-2026", "5:19:37 AM", "6:44:33 PM"], ["30", "20-03-2026", "5:18:29 AM", "6:44:59 PM"]],
             'LAHORE': [["1", "19-02-2026", "5:18:31 AM", "5:51:24 PM"], ["2", "20-02-2026", "5:17:34 AM", "5:52:13 PM"], ["3", "21-02-2026", "5:16:36 AM", "5:53:02 PM"], ["4", "22-02-2026", "5:15:37 AM", "5:53:51 PM"], ["5", "23-02-2026", "5:14:38 AM", "5:54:40 PM"], ["6", "24-02-2026", "5:13:38 AM", "5:55:28 PM"], ["7", "25-02-2026", "5:12:37 AM", "5:56:17 PM"], ["8", "26-02-2026", "5:11:35 AM", "5:57:05 PM"], ["9", "27-02-2026", "5:10:33 AM", "5:57:53 PM"], ["10", "28-02-2026", "5:09:30 AM", "5:58:41 PM"], ["11", "01-03-2026", "5:08:26 AM", "5:59:28 PM"], ["12", "02-03-2026", "5:07:22 AM", "6:00:16 PM"], ["13", "03-03-2026", "5:06:17 AM", "6:01:03 PM"], ["14", "04-03-2026", "5:05:11 AM", "6:01:50 PM"], ["15", "05-03-2026", "5:04:05 AM", "6:02:37 PM"], ["16", "06-03-2026", "5:02:58 AM", "6:03:24 PM"], ["17", "07-03-2026", "5:01:51 AM", "6:04:10 PM"], ["18", "08-03-2026", "5:00:43 AM", "6:04:57 PM"], ["19", "09-03-2026", "4:59:35 AM", "6:05:43 PM"], ["20", "10-03-2026", "4:58:26 AM", "6:06:29 PM"], ["21", "11-03-2026", "4:57:17 AM", "6:07:15 PM"], ["22", "12-03-2026", "4:56:07 AM", "6:08:01 PM"], ["23", "13-03-2026", "4:45:56 AM", "6:08:47 PM"], ["24", "14-03-2026", "4:45:45 AM", "6:09:33 PM"], ["25", "15-03-2026", "4:45:34 AM", "6:10:18 PM"], ["26", "16-03-2026", "4:45:22 AM", "6:11:04 PM"], ["27", "17-03-2026", "4:45:10 AM", "6:11:50 PM"], ["28", "18-03-2026", "4:45:58 AM", "6:12:35 PM"], ["29", "19-03-2026", "4:45:45 AM", "6:13:21 PM"], ["30", "20-03-2026", "4:44:29 AM", "6:14:06 PM"]],
             'ISLAMABAD': [["1", "19-02-2026", "5:24:03 AM", "5:58:15 PM"], ["2", "20-02-2026", "5:23:02 AM", "5:59:08 PM"], ["3", "21-02-2026", "5:22:00 AM", "6:00:01 PM"], ["4", "22-02-2026", "5:20:57 AM", "6:00:54 PM"], ["5", "23-02-2026", "5:19:53 AM", "6:01:46 PM"], ["6", "24-02-2026", "5:18:48 AM", "6:02:38 PM"], ["7", "25-02-2026", "5:17:41 AM", "6:03:29 PM"], ["8", "26-02-2026", "5:16:33 AM", "6:04:20 PM"], ["9", "27-02-2026", "5:15:25 AM", "6:05:11 PM"], ["10", "28-02-2026", "5:14:15 AM", "6:06:02 PM"], ["11", "01-03-2026", "5:13:05 AM", "6:06:53 PM"], ["12", "02-03-2026", "5:11:53 AM", "6:07:44 PM"], ["13", "03-03-2026", "5:10:41 AM", "6:08:34 PM"], ["14", "04-03-2026", "5:09:27 AM", "6:09:25 PM"], ["15", "05-03-2026", "5:08:13 AM", "6:10:15 PM"], ["16", "06-03-2026", "5:06:58 AM", "6:11:05 PM"], ["17", "07-03-2026", "5:05:42 AM", "6:11:55 PM"], ["18", "08-03-2026", "5:04:25 AM", "6:12:45 PM"], ["19", "09-03-2026", "5:03:07 AM", "6:13:35 PM"], ["20", "10-03-2026", "5:01:48 AM", "6:14:24 PM"], ["21", "11-03-2026", "5:00:28 AM", "6:15:14 PM"], ["22", "12-03-2026", "4:59:08 AM", "6:16:04 PM"], ["23", "13-03-2026", "4:57:46 AM", "6:16:53 PM"], ["24", "14-03-2026", "4:56:24 AM", "6:17:43 PM"], ["25", "15-03-2026", "4:55:01 AM", "6:18:32 PM"], ["26", "16-03-2026", "4:53:38 AM", "6:19:21 PM"], ["27", "17-03-2026", "4:52:13 AM", "6:20:11 PM"], ["28", "18-03-2026", "4:50:48 AM", "6:21:00 PM"], ["29", "19-03-2026", "4:49:22 AM", "6:21:49 PM"], ["30", "20-03-2026", "4:47:56 AM", "6:22:38 PM"]]
         };
@@ -473,11 +603,11 @@
 
         const translations = {
             en: {
-                theme: "Theme", audio: "Sound", mainTitle: "SAHAR-O-IFTAR",
-                saharTitle: "SAHAR", iftarTitle: "IFTAR", cityHint: "Your Location",
-                timeLeft: "Time remaining", viewCalendar: "View Ramadan Calendar", readDua: "Dua",
+                theme: "Theme", audio: "Sound", mainTitle: "SAHAR-O-IFTAR TIMING",
+                saharTitle: "SAHAR", iftarTitle: "IFTAR", cityHint: "Click on city name to change",
+                timeLeft: "Time left", viewCalendar: "View Full Month Calendar", readDua: "Read Dua",
                 selectCity: "Select City", calRoza: "Roza", calDate: "Date",
-                untilSahar: "UNTIL SAHAR", untilIftar: "UNTIL IFTAR",
+                untilSahar: "Time until Sahar", untilIftar: "Time until Iftar",
                 finishEating: "Wrap up your meal..!", saharEnded: "Sahar Time Ended", iftarTimeMsg: "It's Iftar Time!",
                 ramadan: "RAMADAN", eidMubarak: "Eid Mubarak!",
                 KARACHI: "KARACHI", LAHORE: "LAHORE", ISLAMABAD: "ISLAMABAD",
@@ -485,9 +615,9 @@
                 months: ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"]
             },
             ur: {
-                theme: "تھیم", audio: "آواز", mainTitle: "سحر و افطار",
-                saharTitle: "سحر", iftarTitle: "افطار", cityHint: "آپ کا شہر",
-                timeLeft: "باقی وقت", viewCalendar: "رمضان کیلنڈر", readDua: "دعا",
+                theme: "تھیم", audio: "آواز", mainTitle: "سحر و افطار کے اوقات",
+                saharTitle: "سحر", iftarTitle: "افطار", cityHint: "تبدیل کرنے کے لیے شہر کے نام پر کلک کریں",
+                timeLeft: "باقی وقت", viewCalendar: "پورے مہینے کا کیلنڈر دیکھیں", readDua: "دعا پڑھیں",
                 selectCity: "شہر منتخب کریں", calRoza: "روزہ", calDate: "تاریخ",
                 untilSahar: "سحر میں باقی وقت", untilIftar: "افطار میں باقی وقت",
                 finishEating: "کھانا ختم کریں..!", saharEnded: "سحر کا وقت ختم ہو گیا", iftarTimeMsg: "افطار کا وقت ہو گیا ہے!",
@@ -514,7 +644,6 @@
 
         function applyLanguage() {
             document.body.className = currentLang === 'ur' ? 'lang-ur' : '';
-            document.getElementById('lang-text').innerText = currentLang === 'en' ? 'URDU' : 'ENGLISH';
             document.querySelectorAll('[data-i18n]').forEach(el => { el.innerText = t(el.getAttribute('data-i18n')); });
             document.querySelectorAll('[data-i18n-city]').forEach(el => { el.innerText = t(el.getAttribute('data-i18n-city')); });
             updateDashboard();
@@ -548,31 +677,49 @@
             if (!audioEnabled && activeOscillator) { try { activeOscillator.stop(); } catch(e){} }
         }
 
+        function initInteractions() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+        }
+        document.addEventListener('click', initInteractions);
+
         function playSiren(duration) {
             if (!audioEnabled) return;
             try {
                 if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 if (audioCtx.state === 'suspended') audioCtx.resume();
+                
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
+                
                 osc.type = 'triangle';
-                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                
                 const now = audioCtx.currentTime;
+                
+                // Frequency Sweep
                 for (let i = 0; i < duration; i += 4) {
                     osc.frequency.setValueAtTime(400, now + i);
                     osc.frequency.exponentialRampToValueAtTime(800, now + i + 2);
                     osc.frequency.exponentialRampToValueAtTime(400, now + i + 4);
                 }
+                
                 gain.gain.setValueAtTime(0, now);
                 gain.gain.linearRampToValueAtTime(0.5, now + 0.1);
                 gain.gain.setValueAtTime(0.5, now + duration - 0.5);
                 gain.gain.linearRampToValueAtTime(0, now + duration);
-                osc.start(now); osc.stop(now + duration);
+                
+                osc.start(now);
+                osc.stop(now + duration);
                 activeOscillator = osc;
             } catch (e) {}
         }
 
-        function parseAppDate(dateStr) { const parts = dateStr.split('-'); return new Date(parts[2], parts[1] - 1, parts[0]); }
+        function parseAppDate(dateStr) {
+            const parts = dateStr.split('-');
+            return new Date(parts[2], parts[1] - 1, parts[0]);
+        }
 
         function parseTimeObj(dateStr, timeStr) {
             const d = parseAppDate(dateStr);
@@ -581,7 +728,8 @@
             let h = parseInt(parts[1], 10), m = parseInt(parts[2], 10), s = parseInt(parts[3], 10);
             if (parts[4].toUpperCase() === "PM" && h < 12) h += 12;
             if (parts[4].toUpperCase() === "AM" && h === 12) h = 0;
-            d.setHours(h, m, s, 0); return d;
+            d.setHours(h, m, s, 0);
+            return d;
         }
 
         function init() {
@@ -599,8 +747,11 @@
             let targetIndex = -1;
             for (let i = 0; i < rows.length; i++) {
                 const rowDate = parseAppDate(rows[i][1]);
-                if (now.getDate() === rowDate.getDate() && now.getMonth() === rowDate.getMonth()) { targetIndex = i; break; }
-                else if (now < rowDate) { targetIndex = i; break; }
+                if (now.getDate() === rowDate.getDate() && now.getMonth() === rowDate.getMonth()) {
+                    targetIndex = i; break;
+                } else if (now < rowDate) {
+                    targetIndex = i; break;
+                }
             }
             if (targetIndex === -1) { renderEid(); return; }
             todayData = rows[targetIndex];
@@ -609,42 +760,58 @@
             document.getElementById('islamic-date').innerText = `${String(todayData[0]).padStart(2, '0')} ${t('ramadan')}`;
             document.getElementById('english-date').innerText = `${String(dateObj.getDate()).padStart(2, '0')} ${t('months')[dateObj.getMonth()]} ${dateObj.getFullYear()}`;
             document.getElementById('day-display').innerText = t('days')[dateObj.getDay()];
-            document.getElementById('sahar-time').innerText = todayData[2].replace(/:(\d+)\s/, ' ');
-            document.getElementById('iftar-time').innerText = todayData[3].replace(/:(\d+)\s/, ' ');
+            document.getElementById('sahar-time').innerText = todayData[2];
+            document.getElementById('iftar-time').innerText = todayData[3];
             document.getElementById('selected-city').innerText = t(currentCity);
         }
 
         function renderEid() {
             document.getElementById('islamic-date').innerText = t('eidMubarak');
             document.getElementById('countdown-label').innerText = t('eidMubarak');
-            document.getElementById('countdown-timer').innerText = "🌙";
+            document.getElementById('countdown-timer').innerText = "";
         }
 
         function updateCountdown() {
-            const now = new Date(); if (!todayData) return;
+            const now = new Date();
+            if (!todayData) return;
             const saharTime = parseTimeObj(todayData[1], todayData[2]);
             const iftarTime = parseTimeObj(todayData[1], todayData[3]);
             let targetTime, label, phase;
 
-            if (now < saharTime) { targetTime = saharTime; label = t("untilSahar"); phase = 'sahar'; }
-            else if (now < iftarTime) { targetTime = iftarTime; label = t("untilIftar"); phase = 'iftar'; }
-            else if (nextData) { targetTime = parseTimeObj(nextData[1], nextData[2]); label = t("untilSahar"); phase = 'sahar'; }
-            else return;
+            if (now < saharTime) {
+                targetTime = saharTime; label = t("untilSahar"); phase = 'sahar';
+            } else if (now < iftarTime) {
+                targetTime = iftarTime; label = t("untilIftar"); phase = 'iftar';
+            } else if (nextData) {
+                targetTime = parseTimeObj(nextData[1], nextData[2]);
+                label = t("untilSahar"); phase = 'sahar';
+            } else { return; }
 
-            const diff = targetTime - now; const totalSecsLeft = Math.floor(diff / 1000);
-            if (totalSecsLeft <= 0) { triggerEndedEvent(phase); updateDashboard(); return; }
+            const diff = targetTime - now;
+            const totalSecsLeft = Math.floor(diff / 1000);
+
+            if (totalSecsLeft <= 0) {
+                triggerEndedEvent(phase);
+                updateDashboard();
+                return;
+            }
 
             const currentLayer = document.getElementById('warning-layer');
-            const isCritical = currentLayer.classList.contains('red') || currentLayer.classList.contains('green');
+            const isCriticalWarning = currentLayer.classList.contains('red') || currentLayer.classList.contains('green');
             
             if (phase === 'sahar' && totalSecsLeft <= 120) {
-                if (!alertFlags.sahar2min && !isCritical) {
+                if (!alertFlags.sahar2min && !isCriticalWarning) {
                     alertFlags.sahar2min = true;
                     showWarning('orange', t('finishEating'), true, false);
                 }
-            } else if (alertFlags.sahar2min && !isCritical) { alertFlags.sahar2min = false; closeWarning(); }
+            } else if (alertFlags.sahar2min && !isCriticalWarning) {
+                alertFlags.sahar2min = false;
+                closeWarning();
+            }
 
-            const h = Math.floor(totalSecsLeft / 3600), m = Math.floor((totalSecsLeft % 3600) / 60), s = totalSecsLeft % 60;
+            const h = Math.floor(totalSecsLeft / 3600);
+            const m = Math.floor((totalSecsLeft % 3600) / 60);
+            const s = totalSecsLeft % 60;
             const fmt = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
             document.getElementById('countdown-label').innerText = label;
             document.getElementById('countdown-timer').innerText = fmt;
@@ -655,29 +822,38 @@
 
         function triggerEndedEvent(phase) {
             if (phase === 'sahar' && !alertFlags.sahar0) {
-                alertFlags.sahar0 = true; alertFlags.iftar0 = false; alertFlags.sahar2min = false;
-                document.getElementById('warning-layer').classList.remove('active', 'orange'); 
-                playSiren(15);
+                alertFlags.sahar0 = true; 
+                alertFlags.iftar0 = false;
+                alertFlags.sahar2min = false;
+                
+                // Force clear previous orange warning
+                const layer = document.getElementById('warning-layer');
+                layer.classList.remove('active', 'orange'); 
+
+                playSiren(15); // Siren triggered here
                 showWarning('red', t('saharEnded'), false, true);
+                
                 if (overlayTimeout) clearTimeout(overlayTimeout);
-                overlayTimeout = setTimeout(() => { closeWarning(); alertFlags.sahar0 = false; }, 120000);
+                overlayTimeout = setTimeout(() => {
+                    closeWarning();
+                    alertFlags.sahar0 = false;
+                }, 120000); // 2 mins
+                
             } else if (phase === 'iftar' && !alertFlags.iftar0) {
-                alertFlags.iftar0 = true; alertFlags.sahar0 = false;
+                alertFlags.iftar0 = true; 
+                alertFlags.sahar0 = false;
                 playSiren(15);
                 showWarning('green', t('iftarTimeMsg'), false, true);
                 if (overlayTimeout) clearTimeout(overlayTimeout);
-                overlayTimeout = setTimeout(() => { closeWarning(); alertFlags.iftar0 = false; }, 300000);
+                overlayTimeout = setTimeout(() => {
+                    closeWarning();
+                    alertFlags.iftar0 = false;
+                }, 300000);
             }
         }
 
         function showWarning(colorClass, text, showTimer, showClose) {
             const layer = document.getElementById('warning-layer');
-            const iconEl = document.getElementById('warning-icon');
-            
-            if(colorClass === 'orange') iconEl.innerText = '⏳';
-            if(colorClass === 'red') iconEl.innerText = '🛑';
-            if(colorClass === 'green') iconEl.innerText = '🌙';
-
             layer.className = `warning-overlay active ${colorClass}`;
             document.getElementById('warning-text').innerText = text;
             document.getElementById('warning-timer').style.display = showTimer ? 'block' : 'none';
@@ -691,17 +867,26 @@
         }
 
         function renderCalendar() {
-            const tbody = document.getElementById('calendar-body'); tbody.innerHTML = '';
-            const rows = DB[currentCity]; const now = new Date();
+            const tbody = document.getElementById('calendar-body');
+            tbody.innerHTML = '';
+            const rows = DB[currentCity];
+            const now = new Date();
             rows.forEach(row => {
-                const tr = document.createElement('tr'); const rowDate = parseAppDate(row[1]);
+                const tr = document.createElement('tr');
+                const rowDate = parseAppDate(row[1]);
                 if (now.getDate() === rowDate.getDate() && now.getMonth() === rowDate.getMonth()) tr.className = 'active-day';
                 tr.innerHTML = `<td>${row[0]}</td><td>${row[1]}</td><td>${row[2]}</td><td>${row[3]}</td>`;
                 tbody.appendChild(tr);
             });
         }
 
-        function changeCity(city) { currentCity = city; localStorage.setItem('selectedCity', city); closeModals(); init(); }
+        function changeCity(city) {
+            currentCity = city;
+            localStorage.setItem('selectedCity', city);
+            closeModals();
+            init();
+        }
+
         function openCityModal() { document.getElementById('city-modal').style.display = 'flex'; }
         function openCalendarModal() { document.getElementById('calendar-modal').style.display = 'flex'; }
         function openDuaModal(type) {
@@ -711,8 +896,8 @@
             document.getElementById('dua-modal').style.display = 'flex';
         }
         function closeModals() { document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none'); }
+
         window.onload = init;
     </script>
 </body>
 </html>
-
