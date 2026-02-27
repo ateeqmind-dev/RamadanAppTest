@@ -168,7 +168,7 @@
             background-color: var(--bg-top);
             color: var(--text-light);
             text-align: center;
-            padding: 2vh 20px 3vh;
+            padding: 1.5vh 20px 2vh;
             position: relative;
             border-bottom: 4px solid var(--gold);
             transition: background-color 0.3s ease;
@@ -203,15 +203,8 @@
             transition: transform 0.3s ease;
         }
 
-        .mosque-icon svg {
-            width: 45px;
-            height: auto;
-            fill: var(--gold);
-            margin-bottom: 1.5vh;
-        }
-
         .islamic-date {
-            font-size: clamp(22px, 6.5vw, 28px);
+            font-size: clamp(24px, 7vw, 30px);
             font-weight: 700;
             margin-bottom: 2px;
             font-family: var(--font-main);
@@ -221,7 +214,7 @@
         .english-date {
             font-size: clamp(14px, 4vw, 16px);
             font-weight: 400;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
             font-family: var(--font-main);
             direction: ltr;
             opacity: 0.85;
@@ -236,19 +229,14 @@
 
         /* BOTTOM SECTION */
         .bottom-section {
-            padding: 2vh 20px;
+            padding: 1.5vh 20px;
             text-align: center;
             flex-grow: 1;
             display: flex;
             flex-direction: column;
-            justify-content: space-evenly;
-        }
-
-        .title-text {
-            color: var(--text-dark);
-            font-weight: 700;
-            font-size: clamp(16px, 5vw, 20px);
-            transition: color 0.3s ease;
+            justify-content: flex-start;
+            gap: 1.5vh;
+            overflow: hidden;
         }
 
         .city-wrapper {
@@ -262,27 +250,27 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
-            padding: 8px 20px;
+            padding: 6px 18px;
             border: 1.5px solid var(--gold);
             border-radius: 30px;
             color: var(--text-dark);
             font-weight: 600;
             cursor: pointer;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
             background: transparent;
-            font-size: 16px;
+            font-size: 15px;
             transition: color 0.3s ease;
             font-family: inherit;
         }
 
         .city-selector svg {
-            width: 16px;
+            width: 14px;
             fill: var(--text-dark);
             transition: fill 0.3s ease;
         }
 
         .city-hint {
-            font-size: 11px;
+            font-size: 10px;
             color: var(--text-dark);
             opacity: 0.6;
             font-weight: 400;
@@ -292,14 +280,14 @@
         .timings-wrapper {
             display: flex;
             justify-content: space-between;
-            gap: 15px;
+            gap: 12px;
         }
 
         .timing-box {
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: 12px;
-            padding: 1.5vh 5px;
+            padding: 1vh 5px;
             flex: 1;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
             display: flex;
@@ -309,14 +297,14 @@
         }
 
         .timing-box h2 {
-            font-size: 16px;
+            font-size: 14px;
             color: var(--gold);
-            margin-bottom: 4px;
+            margin-bottom: 2px;
             font-weight: 700;
         }
 
         .timing-box .time {
-            font-size: clamp(16px, 4.5vw, 19px);
+            font-size: clamp(15px, 4vw, 18px);
             color: var(--text-dark);
             font-weight: 700;
             font-family: var(--font-main);
@@ -324,13 +312,13 @@
         }
 
         .dua-btn {
-            margin-top: 10px;
-            padding: 4px 12px;
+            margin-top: 6px;
+            padding: 3px 10px;
             background: rgba(215, 174, 93, 0.15);
             color: var(--gold);
             border: 1px solid var(--gold);
             border-radius: 20px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 600;
             cursor: pointer;
             font-family: inherit;
@@ -341,20 +329,27 @@
             background: var(--bg-top);
             color: white;
             border-radius: 12px;
-            padding: 2vh 20px;
+            padding: 10px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 120px;
         }
 
         .countdown-label {
-            font-size: 13px;
+            font-size: 12px;
             color: var(--gold);
-            margin-bottom: 6px;
+            margin-bottom: 4px;
             font-weight: 600;
             text-transform: uppercase;
         }
 
         .countdown-timer {
-            font-size: clamp(26px, 8vw, 32px);
+            font-size: clamp(40px, 12vh, 65px);
+            line-height: 1;
             font-weight: 700;
             font-variant-numeric: tabular-nums;
             font-family: var(--font-main);
@@ -367,10 +362,11 @@
             border: none;
             text-decoration: underline;
             font-weight: 600;
-            font-size: 14px;
+            font-size: 13px;
             cursor: pointer;
-            padding: 10px;
+            padding: 8px;
             font-family: inherit;
+            margin-top: auto;
         }
 
         /* Modals */
@@ -474,11 +470,13 @@
 
         .credit {
             text-align: center;
-            font-size: 12px;
+            font-size: 11px;
             color: var(--text-dark);
             opacity: 0.7;
-            padding: 5px 0 15px;
+            padding: 4px 0 10px;
             flex-shrink: 0;
+            font-weight: 600;
+            letter-spacing: 0.5px;
         }
     </style>
 </head>
@@ -509,17 +507,12 @@
                 </button>
             </div>
 
-            <div class="mosque-icon">
-                <svg viewBox="0 0 24 24"><path d="M12 2C10.89 2 10 2.89 10 4V4.5C8.82 5.06 8 6.42 8 8V12H4V14H6V22H18V14H20V12H16V8C16 6.42 15.18 5.06 14 4.5V4C14 2.89 13.11 2 12 2M12 4C12.55 4 13 4.45 13 5V5.5C13 5.5 13 6 12 6C11 6 11 5.5 11 5.5V5C11 4.45 11.45 4 12 4M12 7C14.21 7 16 8.79 16 11V12H8V11C8 8.79 9.79 7 12 7Z" /></svg>
-            </div>
             <div class="islamic-date" id="islamic-date">--</div>
             <div class="english-date" id="english-date">--</div>
             <div class="day-display" id="day-display">--</div>
         </div>
 
         <div class="bottom-section">
-            <div class="title-text" data-i18n="mainTitle">SAHAR-O-IFTAR TIMING</div>
-
             <div class="city-wrapper">
                 <button class="city-selector" onclick="openCityModal()">
                     <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" /></svg>
@@ -547,6 +540,7 @@
             </div>
 
             <button class="calendar-btn" data-i18n="viewCalendar" onclick="openCalendarModal()">View Full Month Calendar</button>
+            <div class="credit">Designed by ATEEQ</div>
         </div>
 
         <div class="modal-overlay" id="city-modal">
@@ -583,12 +577,11 @@
             </div>
         </div>
 
-        <div class="credit">App by Ateeq</div>
     </div>
 
     <script>
         const DB = {
-            'KARACHI': [["1", "19-02-2026", "5:45:40 AM", "6:30:22 PM"], ["2", "20-02-2026", "5:44:57 AM", "6:30:57 PM"], ["3", "21-02-2026", "5:44:13 AM", "6:31:32 PM"], ["4", "22-02-2026", "5:43:28 AM", "6:32:06 PM"], ["5", "23-02-2026", "5:42:42 AM", "6:32:40 PM"], ["6", "24-02-2026", "5:41:55 AM", "6:33:13 PM"], ["7", "25-02-2026", "5:41:08 AM", "6:33:45 PM"], ["8", "26-02-2026", "10:45:30 PM", "10:47:20 PM"], ["9", "27-02-2026", "5:39:29 AM", "6:34:50 PM"], ["10", "28-02-2026", "5:38:38 AM", "6:35:22 PM"], ["11", "01-03-2026", "5:37:47 AM", "6:35:53 PM"], ["12", "02-03-2026", "5:36:54 AM", "6:36:24 PM"], ["13", "03-03-2026", "5:36:00 AM", "6:36:55 PM"], ["14", "04-03-2026", "5:35:05 AM", "6:37:25 PM"], ["15", "05-03-2026", "5:34:09 AM", "6:37:55 PM"], ["16", "06-03-2026", "5:33:12 AM", "6:38:25 PM"], ["17", "07-03-2026", "5:32:15 AM", "6:38:55 PM"], ["18", "08-03-2026", "5:31:16 AM", "6:39:24 PM"], ["19", "09-03-2026", "5:30:17 AM", "6:39:54 PM"], ["20", "10-03-2026", "5:29:16 AM", "6:40:22 PM"], ["21", "11-03-2026", "5:28:15 AM", "6:40:51 PM"], ["22", "12-03-2026", "5:27:13 AM", "6:41:20 PM"], ["23", "13-03-2026", "5:26:10 AM", "6:41:48 PM"], ["24", "14-03-2026", "5:25:06 AM", "6:42:16 PM"], ["25", "15-03-2026", "5:24:02 AM", "6:42:44 PM"], ["26", "16-03-2026", "5:22:56 AM", "6:43:11 PM"], ["27", "17-03-2026", "5:21:51 AM", "6:43:38 PM"], ["28", "18-03-2026", "5:20:44 AM", "6:44:06 PM"], ["29", "19-03-2026", "5:19:37 AM", "6:44:33 PM"], ["30", "20-03-2026", "5:18:29 AM", "6:44:59 PM"]],
+            'KARACHI': [["1", "19-02-2026", "5:45:40 AM", "6:30:22 PM"], ["2", "20-02-2026", "5:44:57 AM", "6:30:57 PM"], ["3", "21-02-2026", "5:44:13 AM", "6:31:32 PM"], ["4", "22-02-2026", "5:43:28 AM", "6:32:06 PM"], ["5", "23-02-2026", "5:42:42 AM", "6:32:40 PM"], ["6", "24-02-2026", "5:41:55 AM", "6:33:13 PM"], ["7", "25-02-2026", "5:41:08 AM", "6:33:45 PM"], ["8", "26-02-2026", "10:45:30 PM", "10:47:20 PM"], ["9", "27-02-2026", "7:30:29 PM", "7:32:50 PM"], ["10", "28-02-2026", "5:38:38 AM", "6:35:22 PM"], ["11", "01-03-2026", "5:37:47 AM", "6:35:53 PM"], ["12", "02-03-2026", "5:36:54 AM", "6:36:24 PM"], ["13", "03-03-2026", "5:36:00 AM", "6:36:55 PM"], ["14", "04-03-2026", "5:35:05 AM", "6:37:25 PM"], ["15", "05-03-2026", "5:34:09 AM", "6:37:55 PM"], ["16", "06-03-2026", "5:33:12 AM", "6:38:25 PM"], ["17", "07-03-2026", "5:32:15 AM", "6:38:55 PM"], ["18", "08-03-2026", "5:31:16 AM", "6:39:24 PM"], ["19", "09-03-2026", "5:30:17 AM", "6:39:54 PM"], ["20", "10-03-2026", "5:29:16 AM", "6:40:22 PM"], ["21", "11-03-2026", "5:28:15 AM", "6:40:51 PM"], ["22", "12-03-2026", "5:27:13 AM", "6:41:20 PM"], ["23", "13-03-2026", "5:26:10 AM", "6:41:48 PM"], ["24", "14-03-2026", "5:25:06 AM", "6:42:16 PM"], ["25", "15-03-2026", "5:24:02 AM", "6:42:44 PM"], ["26", "16-03-2026", "5:22:56 AM", "6:43:11 PM"], ["27", "17-03-2026", "5:21:51 AM", "6:43:38 PM"], ["28", "18-03-2026", "5:20:44 AM", "6:44:06 PM"], ["29", "19-03-2026", "5:19:37 AM", "6:44:33 PM"], ["30", "20-03-2026", "5:18:29 AM", "6:44:59 PM"]],
             'LAHORE': [["1", "19-02-2026", "5:18:31 AM", "5:51:24 PM"], ["2", "20-02-2026", "5:17:34 AM", "5:52:13 PM"], ["3", "21-02-2026", "5:16:36 AM", "5:53:02 PM"], ["4", "22-02-2026", "5:15:37 AM", "5:53:51 PM"], ["5", "23-02-2026", "5:14:38 AM", "5:54:40 PM"], ["6", "24-02-2026", "5:13:38 AM", "5:55:28 PM"], ["7", "25-02-2026", "5:12:37 AM", "5:56:17 PM"], ["8", "26-02-2026", "5:11:35 AM", "5:57:05 PM"], ["9", "27-02-2026", "5:10:33 AM", "5:57:53 PM"], ["10", "28-02-2026", "5:09:30 AM", "5:58:41 PM"], ["11", "01-03-2026", "5:08:26 AM", "5:59:28 PM"], ["12", "02-03-2026", "5:07:22 AM", "6:00:16 PM"], ["13", "03-03-2026", "5:06:17 AM", "6:01:03 PM"], ["14", "04-03-2026", "5:05:11 AM", "6:01:50 PM"], ["15", "05-03-2026", "5:04:05 AM", "6:02:37 PM"], ["16", "06-03-2026", "5:02:58 AM", "6:03:24 PM"], ["17", "07-03-2026", "5:01:51 AM", "6:04:10 PM"], ["18", "08-03-2026", "5:00:43 AM", "6:04:57 PM"], ["19", "09-03-2026", "4:59:35 AM", "6:05:43 PM"], ["20", "10-03-2026", "4:58:26 AM", "6:06:29 PM"], ["21", "11-03-2026", "4:57:17 AM", "6:07:15 PM"], ["22", "12-03-2026", "4:56:07 AM", "6:08:01 PM"], ["23", "13-03-2026", "4:45:56 AM", "6:08:47 PM"], ["24", "14-03-2026", "4:45:45 AM", "6:09:33 PM"], ["25", "15-03-2026", "4:45:34 AM", "6:10:18 PM"], ["26", "16-03-2026", "4:45:22 AM", "6:11:04 PM"], ["27", "17-03-2026", "4:45:10 AM", "6:11:50 PM"], ["28", "18-03-2026", "4:45:58 AM", "6:12:35 PM"], ["29", "19-03-2026", "4:45:45 AM", "6:13:21 PM"], ["30", "20-03-2026", "4:44:29 AM", "6:14:06 PM"]],
             'ISLAMABAD': [["1", "19-02-2026", "5:24:03 AM", "5:58:15 PM"], ["2", "20-02-2026", "5:23:02 AM", "5:59:08 PM"], ["3", "21-02-2026", "5:22:00 AM", "6:00:01 PM"], ["4", "22-02-2026", "5:20:57 AM", "6:00:54 PM"], ["5", "23-02-2026", "5:19:53 AM", "6:01:46 PM"], ["6", "24-02-2026", "5:18:48 AM", "6:02:38 PM"], ["7", "25-02-2026", "5:17:41 AM", "6:03:29 PM"], ["8", "26-02-2026", "5:16:33 AM", "6:04:20 PM"], ["9", "27-02-2026", "5:15:25 AM", "6:05:11 PM"], ["10", "28-02-2026", "5:14:15 AM", "6:06:02 PM"], ["11", "01-03-2026", "5:13:05 AM", "6:06:53 PM"], ["12", "02-03-2026", "5:11:53 AM", "6:07:44 PM"], ["13", "03-03-2026", "5:10:41 AM", "6:08:34 PM"], ["14", "04-03-2026", "5:09:27 AM", "6:09:25 PM"], ["15", "05-03-2026", "5:08:13 AM", "6:10:15 PM"], ["16", "06-03-2026", "5:06:58 AM", "6:11:05 PM"], ["17", "07-03-2026", "5:05:42 AM", "6:11:55 PM"], ["18", "08-03-2026", "5:04:25 AM", "6:12:45 PM"], ["19", "09-03-2026", "5:03:07 AM", "6:13:35 PM"], ["20", "10-03-2026", "5:01:48 AM", "6:14:24 PM"], ["21", "11-03-2026", "5:00:28 AM", "6:15:14 PM"], ["22", "12-03-2026", "4:59:08 AM", "6:16:04 PM"], ["23", "13-03-2026", "4:57:46 AM", "6:16:53 PM"], ["24", "14-03-2026", "4:56:24 AM", "6:17:43 PM"], ["25", "15-03-2026", "4:55:01 AM", "6:18:32 PM"], ["26", "16-03-2026", "4:53:38 AM", "6:19:21 PM"], ["27", "17-03-2026", "4:52:13 AM", "6:20:11 PM"], ["28", "18-03-2026", "4:50:48 AM", "6:21:00 PM"], ["29", "19-03-2026", "4:49:22 AM", "6:21:49 PM"], ["30", "20-03-2026", "4:47:56 AM", "6:22:38 PM"]]
         };
