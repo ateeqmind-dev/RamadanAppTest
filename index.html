@@ -27,7 +27,7 @@
             --border: #e2e8f0;
             --modal-bg: rgba(255, 255, 255, 0.95);
             --modal-overlay: rgba(15, 23, 42, 0.4);
-            
+
             /* Shadows & Effects */
             --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
             --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.08);
@@ -35,7 +35,7 @@
             --radius-lg: 24px;
             --radius-md: 16px;
             --radius-pill: 50px;
-            
+
             --font-main: 'Poppins', sans-serif;
             --font-urdu: 'Noto Nastaliq Urdu', serif;
         }
@@ -65,7 +65,8 @@
 
         body {
             font-family: var(--font-main);
-            background-color: #000; /* Outer background for desktop */
+            background-color: #000;
+            /* Outer background for desktop */
             display: flex;
             justify-content: center;
             height: 100vh;
@@ -78,6 +79,13 @@
             direction: ltr;
         }
 
+        /* Prevent Nastaliq from pushing elements out of bounds with excessive line-height */
+        body.lang-ur .bottom-section h2,
+        body.lang-ur .bottom-section .countdown-label,
+        body.lang-ur .bottom-section .calendar-btn {
+            line-height: 1.4;
+        }
+
         .app-container {
             width: 100%;
             max-width: 420px;
@@ -88,7 +96,7 @@
             display: flex;
             flex-direction: column;
             transition: background-color 0.4s ease;
-            box-shadow: 0 0 40px rgba(0,0,0,0.2);
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.2);
         }
 
         /* Celebration Canvas (Global) */
@@ -127,8 +135,13 @@
         }
 
         @keyframes bounce {
-            from { transform: scale(1); }
-            to { transform: scale(1.08); }
+            from {
+                transform: scale(1);
+            }
+
+            to {
+                transform: scale(1.08);
+            }
         }
 
         /* WARNING OVERLAYS */
@@ -160,7 +173,7 @@
             background: linear-gradient(135deg, rgba(255, 193, 7, 0.2), rgba(0, 0, 0, 0.85));
             color: #ffd54f;
         }
-        
+
         .warning-overlay.red {
             background: linear-gradient(135deg, rgba(255, 59, 48, 0.2), rgba(0, 0, 0, 0.85));
             color: #ff6b6b;
@@ -174,15 +187,31 @@
         }
 
         @keyframes pulse-border-red {
-            0% { box-shadow: inset 0 0 0 0 rgba(255, 59, 48, 0.4); }
-            50% { box-shadow: inset 0 0 0 20px rgba(255, 59, 48, 0); }
-            100% { box-shadow: inset 0 0 0 0 rgba(255, 59, 48, 0); }
+            0% {
+                box-shadow: inset 0 0 0 0 rgba(255, 59, 48, 0.4);
+            }
+
+            50% {
+                box-shadow: inset 0 0 0 20px rgba(255, 59, 48, 0);
+            }
+
+            100% {
+                box-shadow: inset 0 0 0 0 rgba(255, 59, 48, 0);
+            }
         }
 
         @keyframes pulse-border-green {
-            0% { box-shadow: inset 0 0 0 0 rgba(52, 199, 89, 0.4); }
-            50% { box-shadow: inset 0 0 0 20px rgba(52, 199, 89, 0); }
-            100% { box-shadow: inset 0 0 0 0 rgba(52, 199, 89, 0); }
+            0% {
+                box-shadow: inset 0 0 0 0 rgba(52, 199, 89, 0.4);
+            }
+
+            50% {
+                box-shadow: inset 0 0 0 20px rgba(52, 199, 89, 0);
+            }
+
+            100% {
+                box-shadow: inset 0 0 0 0 rgba(52, 199, 89, 0);
+            }
         }
 
         .warning-text {
@@ -190,7 +219,7 @@
             font-weight: 700;
             margin-bottom: 24px;
             line-height: 1.3;
-            text-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
 
         .warning-timer {
@@ -220,8 +249,8 @@
             transition: all 0.3s;
         }
 
-        .warning-close-btn:hover { 
-            background: rgba(255, 255, 255, 0.2); 
+        .warning-close-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
             transform: translateY(-2px);
         }
 
@@ -230,13 +259,14 @@
             background: var(--bg-header);
             color: var(--text-light);
             text-align: center;
-            padding: 4.5vh 24px 3vh; /* Increased top padding for the dates */
+            padding: clamp(15px, 4vh, 30px) 24px clamp(10px, 2vh, 20px);
             position: relative;
             border-bottom-left-radius: 32px;
             border-bottom-right-radius: 32px;
             box-shadow: var(--shadow-md);
             transition: all 0.4s ease;
             z-index: 10;
+            flex-shrink: 0;
         }
 
         /* MENU BUTTON & DROPDOWN */
@@ -321,17 +351,17 @@
         }
 
         .islamic-date {
-            font-size: clamp(28px, 8vw, 36px);
+            font-size: clamp(24px, 7vw, 36px);
             font-weight: 700;
             margin-bottom: 4px;
             font-family: var(--font-main);
             direction: ltr;
             letter-spacing: 0.5px;
-            text-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         }
 
         .english-date {
-            font-size: clamp(15px, 4vw, 17px);
+            font-size: clamp(13px, 3.5vw, 17px);
             font-weight: 400;
             margin-bottom: 6px;
             font-family: var(--font-main);
@@ -349,20 +379,23 @@
 
         /* BOTTOM SECTION (Content) */
         .bottom-section {
-            padding: 3vh 24px 2vh;
+            padding: clamp(10px, 2vh, 24px) 24px clamp(5px, 1.5vh, 15px);
             text-align: center;
             flex-grow: 1;
             display: flex;
             flex-direction: column;
-            gap: 2.5vh;
-            overflow-y: auto;
+            justify-content: space-between;
+            /* Dynamically evenly spaced */
+            gap: clamp(8px, 1.5vh, 20px);
+            overflow: hidden;
+            /* Changed to strictly disable main page scrolling */
         }
 
         .city-wrapper {
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-top: 0;
+            flex-shrink: 0;
         }
 
         .city-selector {
@@ -370,13 +403,13 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
-            padding: 10px 24px;
+            padding: clamp(6px, 1.5vh, 10px) 24px;
             background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: var(--radius-pill);
             color: var(--text-dark);
             font-weight: 600;
-            font-size: 16px;
+            font-size: clamp(14px, 4vw, 16px);
             cursor: pointer;
             box-shadow: var(--shadow-sm);
             transition: all 0.3s ease;
@@ -397,13 +430,14 @@
             display: flex;
             justify-content: space-between;
             gap: 16px;
+            flex-shrink: 1;
         }
 
         .timing-box {
             background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: var(--radius-lg);
-            padding: 20px 10px;
+            padding: clamp(10px, 2vh, 20px) 5px;
             flex: 1;
             box-shadow: var(--shadow-sm);
             display: flex;
@@ -414,7 +448,7 @@
         }
 
         .timing-box h2 {
-            font-size: 14px;
+            font-size: clamp(12px, 3.5vw, 14px);
             color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 1px;
@@ -423,7 +457,7 @@
         }
 
         .timing-box .time {
-            font-size: clamp(20px, 5vw, 24px);
+            font-size: clamp(18px, 5vw, 24px);
             color: var(--text-dark);
             font-weight: 700;
             font-family: var(--font-main);
@@ -437,20 +471,22 @@
             color: var(--gold);
             border: none;
             border-radius: var(--radius-pill);
-            font-size: 12px;
+            font-size: clamp(11px, 3vw, 12px);
             font-weight: 600;
             cursor: pointer;
             font-family: inherit;
             transition: all 0.2s;
         }
 
-        .dua-btn:active { transform: scale(0.95); }
+        .dua-btn:active {
+            transform: scale(0.95);
+        }
 
         .countdown-box {
             background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: var(--radius-lg);
-            padding: 24px 15px;
+            padding: clamp(12px, 2vh, 24px) 15px;
             box-shadow: var(--shadow-md);
             display: flex;
             flex-direction: column;
@@ -458,30 +494,34 @@
             align-items: center;
             position: relative;
             overflow: hidden;
-            flex-grow: 1; /* Stretches to automatically fill remaining vertical space */
-            min-height: 120px; /* Safe minimum height for tiny screens */
+            flex-grow: 1;
+            min-height: 60px;
+            /* Reduced to allow extreme shrinking on small displays */
+            container-type: inline-size;
         }
-        
-        /* Subtle glowing accent inside countdown */
+
         .countdown-box::before {
             content: '';
             position: absolute;
-            top: 0; left: 0; right: 0;
+            top: 0;
+            left: 0;
+            right: 0;
             height: 4px;
             background: var(--gold);
         }
 
         .countdown-label {
-            font-size: 13px;
+            font-size: clamp(11px, 3vw, 13px);
             color: var(--text-muted);
-            margin-bottom: 8px;
+            margin-bottom: clamp(4px, 1vh, 8px);
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
         .countdown-timer {
-            font-size: clamp(42px, 12vw, 54px);
+            font-size: clamp(34px, 15vw, 65px);
+            font-size: clamp(34px, 17cqi, 80px);
             line-height: 1.1;
             font-weight: 700;
             color: var(--text-dark);
@@ -495,30 +535,37 @@
             color: var(--text-muted);
             border: none;
             font-weight: 500;
-            font-size: 14px;
+            font-size: clamp(13px, 3.5vw, 14px);
             cursor: pointer;
-            padding: 10px;
+            padding: clamp(5px, 1vh, 10px);
             font-family: inherit;
             transition: color 0.2s;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
+            flex-shrink: 0;
         }
 
-        .calendar-btn:hover { color: var(--gold); }
+        .calendar-btn:hover {
+            color: var(--gold);
+        }
+
         .calendar-btn::after {
             content: '→';
             font-size: 16px;
             transition: transform 0.2s;
         }
-        .calendar-btn:hover::after { transform: translateX(4px); }
+
+        .calendar-btn:hover::after {
+            transform: translateX(4px);
+        }
 
         .credit {
             text-align: center;
             font-size: 12px;
             color: var(--text-muted);
-            padding: 10px 0;
+            padding: clamp(4px, 1vh, 10px) 0;
             flex-shrink: 0;
             font-weight: 500;
             letter-spacing: 0.5px;
@@ -536,9 +583,15 @@
             -webkit-backdrop-filter: blur(6px);
             display: none;
             justify-content: center;
-            align-items: flex-end; /* Bottom sheet style */
+            align-items: flex-end;
+            /* Bottom sheet style */
             z-index: 100;
             padding: 16px;
+        }
+
+        /* Specific rule to make the Calendar modal wider on small screens */
+        #calendar-modal {
+            padding: clamp(8px, 2vw, 16px);
         }
 
         .modal-content {
@@ -554,9 +607,10 @@
             border: 1px solid var(--border);
         }
 
-        @keyframes slideUp {
-            from { transform: translateY(100%); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+        /* Specific rule to stretch table closer to edges inside the calendar modal */
+        #calendar-modal .modal-content {
+            padding: 24px 8px;
+            /* Greatly reduced horizontal padding */
         }
 
         .close-btn {
@@ -578,8 +632,10 @@
             align-items: center;
             transition: all 0.2s;
         }
-        
-        .close-btn:hover { background: var(--border); }
+
+        .close-btn:hover {
+            background: var(--border);
+        }
 
         .modal-content h3 {
             color: var(--text-dark);
@@ -588,7 +644,9 @@
             font-weight: 700;
         }
 
-        .city-list { list-style: none; }
+        .city-list {
+            list-style: none;
+        }
 
         .city-list li {
             padding: 16px;
@@ -611,15 +669,18 @@
 
         .table-responsive {
             width: 100%;
-            overflow-x: auto;
+            overflow-x: hidden;
+            /* Changed from auto to hidden to strictly enforce fit */
             direction: ltr;
         }
 
         .calendar-table {
             width: 100%;
+            table-layout: fixed;
+            /* Added to keep cells completely constrained */
             border-collapse: separate;
-            border-spacing: 0 8px;
-            font-size: clamp(12px, 3.5vw, 14px);
+            border-spacing: 0 6px;
+            font-size: clamp(11px, 2.8vw, 14px);
             font-family: var(--font-main);
         }
 
@@ -627,38 +688,43 @@
             color: var(--text-muted);
             font-weight: 600;
             text-transform: uppercase;
-            font-size: 11px;
-            letter-spacing: 1px;
-            padding-bottom: 8px;
+            font-size: clamp(9px, 2.5vw, 11px);
+            letter-spacing: 0.5px;
+            padding-bottom: 6px;
+            word-wrap: break-word;
         }
 
         .calendar-table td {
             background: var(--bg-main);
-            padding: 12px 8px;
+            padding: 8px 2px;
             text-align: center;
             color: var(--text-dark);
-            white-space: nowrap;
+            white-space: normal;
+            /* Was nowrap. Changed to normal to let text wrap */
+            word-wrap: break-word;
+            /* Ensure super long dates format safely */
             border-top: 1px solid var(--border);
             border-bottom: 1px solid var(--border);
         }
-        
-        .calendar-table td:first-child { 
+
+        .calendar-table td:first-child {
             border-left: 1px solid var(--border);
-            border-top-left-radius: 12px; 
-            border-bottom-left-radius: 12px; 
+            border-top-left-radius: 12px;
+            border-bottom-left-radius: 12px;
             font-weight: 600;
             color: var(--gold);
         }
-        .calendar-table td:last-child { 
+
+        .calendar-table td:last-child {
             border-right: 1px solid var(--border);
-            border-top-right-radius: 12px; 
-            border-bottom-right-radius: 12px; 
+            border-top-right-radius: 12px;
+            border-bottom-right-radius: 12px;
         }
 
-        .active-day td { 
-            background-color: var(--gold-light) !important; 
+        .active-day td {
+            background-color: var(--gold-light) !important;
             border-color: var(--gold) !important;
-            font-weight: 700; 
+            font-weight: 700;
         }
 
         .dua-arabic {
@@ -681,10 +747,23 @@
         }
 
         /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
     </style>
 </head>
 
@@ -701,13 +780,15 @@
         <div id="warning-layer" class="warning-overlay">
             <div id="warning-text" class="warning-text"></div>
             <div id="warning-timer" class="warning-timer"></div>
-            <button id="warning-close" class="warning-close-btn" style="display:none;" onclick="closeWarning()">Close / بند کریں</button>
+            <button id="warning-close" class="warning-close-btn" style="display:none;" onclick="closeWarning()">Close /
+                بند کریں</button>
         </div>
 
         <div class="top-section">
             <button class="menu-btn" onclick="toggleMenu(event)" aria-label="Menu">
                 <svg viewBox="0 0 24 24">
-                    <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                    <path
+                        d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
                 </svg>
             </button>
 
@@ -721,7 +802,10 @@
                     <span data-i18n="audio">Sound</span>
                 </button>
                 <button class="icon-btn" onclick="toggleLang()">
-                    <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm6.93 6h-2.95c-.32-1.25-.78-2.45-1.38-3.56 1.84.63 3.37 1.91 4.33 3.56zM12 4.04c.83 1.2 1.48 2.53 1.91 3.96h-3.82c.43-1.43 1.08-2.76 1.91-3.96zM4.26 14C4.1 13.36 4 12.69 4 12s.1-1.36.26-2h3.38c-.08.66-.14 1.32-.14 2s.06 1.34.14 2H4.26zm.82 2h2.95c.32 1.25.78 2.45 1.38 3.56-1.84-.63-3.37-1.9-4.33-3.56zm2.95-8H5.08c.96-1.66 2.49-2.93 4.33-3.56C8.81 5.55 8.35 6.75 8.03 8zM12 19.96c-.83-1.2-1.48-2.53-1.91-3.96h3.82c-.43 1.43-1.08-2.76-1.91-3.96zM14.34 14H9.66c-.09-.66-.16-1.32-.16-2s.07-1.34.16-2h4.68c.09.66.16 1.32.16 2s-.07 1.34-.16 2zm.25 5.56c.6-1.11 1.06-2.31 1.38-3.56h2.95c-.96 1.65-2.49 2.93-4.33 3.56zM16.36 14c.08-.66.14-1.32.14-2s-.06-1.34-.14-2h3.38c.16.64.26 1.31.26 2s-.1 1.36-.26 2h-3.38z" /></svg>
+                    <svg viewBox="0 0 24 24">
+                        <path
+                            d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm6.93 6h-2.95c-.32-1.25-.78-2.45-1.38-3.56 1.84.63 3.37 1.91 4.33 3.56zM12 4.04c.83 1.2 1.48 2.53 1.91 3.96h-3.82c.43-1.43 1.08-2.76 1.91-3.96zM4.26 14C4.1 13.36 4 12.69 4 12s.1-1.36.26-2h3.38c-.08.66-.14 1.32-.14 2s.06 1.34.14 2H4.26zm.82 2h2.95c.32 1.25.78 2.45 1.38 3.56-1.84-.63-3.37-1.9-4.33-3.56zm2.95-8H5.08c.96-1.66 2.49-2.93 4.33-3.56C8.81 5.55 8.35 6.75 8.03 8zM12 19.96c-.83-1.2-1.48-2.53-1.91-3.96h3.82c-.43 1.43-1.08-2.76-1.91-3.96zM14.34 14H9.66c-.09-.66-.16-1.32-.16-2s.07-1.34.16-2h4.68c.09.66.16 1.32.16 2s-.07 1.34-.16 2zm.25 5.56c.6-1.11 1.06-2.31 1.38-3.56h2.95c-.96 1.65-2.49 2.93-4.33 3.56zM16.36 14c.08-.66.14-1.32.14-2s-.06-1.34-.14-2h3.38c.16.64.26 1.31.26 2s-.1 1.36-.26 2h-3.38z" />
+                    </svg>
                     <span id="lang-text">EN/UR</span>
                 </button>
             </div>
@@ -735,7 +819,9 @@
             <div class="city-wrapper">
                 <button class="city-selector" onclick="openCityModal()">
                     <span id="selected-city">KARACHI</span>
-                    <svg viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+                    <svg viewBox="0 0 24 24">
+                        <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" />
+                    </svg>
                 </button>
             </div>
 
@@ -757,7 +843,8 @@
                 <div class="countdown-timer" id="countdown-timer">00:00:00</div>
             </div>
 
-            <button class="calendar-btn" data-i18n="viewCalendar" onclick="openCalendarModal()">View Full Month Calendar</button>
+            <button class="calendar-btn" data-i18n="viewCalendar" onclick="openCalendarModal()">View Full Month
+                Calendar</button>
             <div class="credit" id="credit-text" onclick="handleCreditClick()">Designed by ATEEQ</div>
         </div>
 
@@ -779,7 +866,14 @@
                 <h3 style="text-align:center;" id="cal-title">Ramadan Calendar</h3>
                 <div class="table-responsive">
                     <table class="calendar-table">
-                        <thead><tr><th data-i18n="calRoza">Roza</th><th data-i18n="calDate">Date</th><th data-i18n="saharTitle">Sahar</th><th data-i18n="iftarTitle">Iftar</th></tr></thead>
+                        <thead>
+                            <tr>
+                                <th data-i18n="calRoza">Roza</th>
+                                <th data-i18n="calDate">Date</th>
+                                <th data-i18n="saharTitle">Sahar</th>
+                                <th data-i18n="iftarTitle">Iftar</th>
+                            </tr>
+                        </thead>
                         <tbody id="calendar-body"></tbody>
                     </table>
                 </div>
@@ -892,14 +986,13 @@
             audioEnabled = !audioEnabled;
             localStorage.setItem('audioEnabled', audioEnabled);
             document.getElementById('audio-icon').innerHTML = audioEnabled ? icons.volOn : icons.volOff;
-            if (!audioEnabled && activeOscillator) { try { activeOscillator.stop(); } catch(e){} }
+            if (!audioEnabled && activeOscillator) { try { activeOscillator.stop(); } catch (e) { } }
         }
 
         function initInteractions(e) {
             if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             if (audioCtx.state === 'suspended') audioCtx.resume();
-            
-            // Handle closing the dropdown menu if clicked outside
+
             const menu = document.getElementById('dropdown-menu');
             if (menu && menu.classList.contains('active')) {
                 const btn = document.querySelector('.menu-btn');
@@ -933,7 +1026,7 @@
                 osc.start(now);
                 osc.stop(now + duration);
                 activeOscillator = osc;
-            } catch (e) {}
+            } catch (e) { }
         }
 
         function parseAppDate(dateStr) {
@@ -1040,7 +1133,7 @@
             if (phase === 'sahar' && !alertFlags.sahar0) {
                 alertFlags.sahar0 = true; alertFlags.iftar0 = false; alertFlags.sahar2min = false;
                 const layer = document.getElementById('warning-layer');
-                layer.classList.remove('active', 'orange'); 
+                layer.classList.remove('active', 'orange');
                 playSiren(15);
                 showWarning('red', t('saharEnded'), false, true);
                 if (overlayTimeout) clearTimeout(overlayTimeout);
@@ -1066,7 +1159,7 @@
             document.getElementById('warning-layer').classList.remove('active');
             celebrationActive = false;
             if (overlayTimeout) clearTimeout(overlayTimeout);
-            if (activeOscillator) { try { activeOscillator.stop(); } catch(e){} }
+            if (activeOscillator) { try { activeOscillator.stop(); } catch (e) { } }
         }
 
         function renderCalendar() {
@@ -1099,7 +1192,7 @@
 
         // --- CELEBRATION & EASTER EGG LOGIC ---
         function handleCreditClick() {
-            if(celebrationActive) return;
+            if (celebrationActive) return;
             eggCounter++;
             if (eggCounter >= 5) {
                 eggCounter = 0;
@@ -1165,15 +1258,15 @@
                 }
                 requestAnimationFrame(animate);
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
-                
+
                 if (Math.random() < 0.08) createFirework();
                 if (withConfetti && Math.random() < 0.2) createConfetti();
-                
+
                 particles.forEach((p, i) => {
                     p.x += p.vx;
                     p.y += p.vy;
                     p.alpha -= 0.01;
-                    
+
                     if (p.type === 'firework') {
                         p.vy += 0.05; // gravity
                     } else {
@@ -1201,5 +1294,25 @@
 
         window.onload = init;
     </script>
+    <script>
+        // Register Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+
+                        // Auto-refresh the page if a new service worker takes over
+                        navigator.serviceWorker.addEventListener('controllerchange', () => {
+                            window.location.reload();
+                        });
+                    })
+                    .catch(err => {
+                        console.log('ServiceWorker registration failed: ', err);
+                    });
+            });
+        }
+    </script>
 </body>
+
 </html>
