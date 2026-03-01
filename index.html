@@ -7,7 +7,7 @@
     <title>Sahar & Iftar Timings</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0F3738">
-    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2290/2290073.png">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.freepik.com/512/13682/13682921.png">
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
@@ -88,7 +88,7 @@
 
         .app-container {
             width: 100%;
-            max-width: 420px;
+            max-width: 500px; /* Increased to accommodate wider screens like tablets */
             height: 100%;
             background-color: var(--bg-main);
             position: relative;
@@ -97,6 +97,13 @@
             flex-direction: column;
             transition: background-color 0.4s ease;
             box-shadow: 0 0 40px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Media query to ensure it takes exactly 100% width on all mobile phones */
+        @media (max-width: 600px) {
+            .app-container {
+                max-width: 100%;
+            }
         }
 
         /* Celebration Canvas (Global) */
@@ -607,6 +614,62 @@
             border: 1px solid var(--border);
         }
 
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(0);
+                opacity: 1;
+            }
+
+            to {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+            }
+
+            to {
+                opacity: 0;
+            }
+        }
+
+        .modal-overlay[style*="display: flex"]:not(.closing) {
+            animation: fadeIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .modal-overlay.closing {
+            animation: fadeOut 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+
+        .modal-overlay.closing .modal-content {
+            animation: slideDown 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+
         /* Specific rule to stretch table closer to edges inside the calendar modal */
         #calendar-modal .modal-content {
             padding: 24px 8px;
@@ -937,7 +1000,7 @@
 
         const duaData = {
             sahar: { arabic: "وَبِصَوْمِ غَدٍ نَّوَيْتُ مِنْ شَهْرِ رَمَضَانَ", trans_en: "I intend to keep the fast for tomorrow in the month of Ramadan.", trans_ur: "میں نے کل کے رمضان کے روزے کی نیت کی۔" },
-            iftar: { arabic: "اللَّهُمَّ إِنِّي لَكَ صُمْتُ وَبِكَ آمَنْتُ وَعَلَيْكَ تَوَكَّلْتُ وَعَلَى رِزْقِكَ أَفْطَرْتُ", trans_en: "O Allah, I fasted for You and I believe in You and I put my trust in You and I break my fast with Your sustenance.", trans_ur: "اے اللہ! میں نے تیرے لئے روزہ رکھا، تجھ پر ایمان لایا، تجھ پر بھروسہ کیا اور تیرے رزق سے افطار کیا۔" }
+            iftar: { arabic: "اللَّهُمَّ لَكَ صُمْتُ وَعَلَى رِزْقِكَ أَفْطَرْتُ", trans_en: "O Allah, I fasted for You and I break my fast with Your sustenance.", trans_ur: "اے اللہ! میں نے تیرے لئے روزہ رکھا اور تیرے رزق سے افطار کیا۔" }
         };
 
         const icons = {
@@ -1180,15 +1243,35 @@
             currentCity = city; localStorage.setItem('selectedCity', city); closeModals(); init();
         }
 
-        function openCityModal() { document.getElementById('city-modal').style.display = 'flex'; }
-        function openCalendarModal() { document.getElementById('calendar-modal').style.display = 'flex'; }
+        function openCityModal() {
+            const m = document.getElementById('city-modal');
+            m.classList.remove('closing');
+            m.style.display = 'flex';
+        }
+        function openCalendarModal() {
+            const m = document.getElementById('calendar-modal');
+            m.classList.remove('closing');
+            m.style.display = 'flex';
+        }
         function openDuaModal(type) {
             document.getElementById('dua-title').innerText = t(type + "Title") + " Dua";
             document.getElementById('dua-arabic-text').innerText = duaData[type].arabic;
             document.getElementById('dua-translation').innerText = currentLang === 'ur' ? duaData[type].trans_ur : duaData[type].trans_en;
-            document.getElementById('dua-modal').style.display = 'flex';
+            const m = document.getElementById('dua-modal');
+            m.classList.remove('closing');
+            m.style.display = 'flex';
         }
-        function closeModals() { document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none'); }
+        function closeModals() {
+            document.querySelectorAll('.modal-overlay').forEach(m => {
+                if (m.style.display === 'flex') {
+                    m.classList.add('closing');
+                    setTimeout(() => {
+                        m.style.display = 'none';
+                        m.classList.remove('closing');
+                    }, 380);
+                }
+            });
+        }
 
         // --- CELEBRATION & EASTER EGG LOGIC ---
         function handleCreditClick() {
