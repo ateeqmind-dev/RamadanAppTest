@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ramadan-v2'; // IMPORTANT: Change this number (e.g., v3, v4) every time you update your HTML!
+const CACHE_NAME = 'ramadan-v2.1'; // IMPORTANT: Change this number (e.g., v3, v4) every time you update your HTML!
 const ASSETS = [
   './',
   './index.html',
@@ -45,3 +45,4 @@ self.addEventListener('fetch', (e) => {
       })
   );
 });
+
