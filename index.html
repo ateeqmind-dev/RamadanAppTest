@@ -3,387 +3,434 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Eid Mubarak | Ultimate Sensor Experience</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+    <title>Eid Mubarak | Physical Sandbox</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,700&family=Montserrat:wght@300;400&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --bg-deep: #0a0e17;
-            --emerald: #0b4b3c;
+            --bg-color: #050a15;
             --gold: #d4af37;
-            --gold-light: #f3e5ab;
-            --text-light: #f8f9fa;
-            /* This variable will be dynamically updated by the microphone */
-            --mic-glow: 0px; 
         }
 
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
             user-select: none;
             -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            font-family: 'Lato', sans-serif;
-            background-color: var(--bg-deep);
-            color: var(--text-light);
-            height: 100dvh; 
+            background-color: var(--bg-color);
+            height: 100dvh;
+            width: 100vw;
             overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            font-family: 'Montserrat', sans-serif;
             touch-action: none;
         }
 
-        #touch-canvas {
+        /* Full screen physics canvas */
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
             position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
             z-index: 1;
         }
 
-        /* Intro Screen */
-        #intro-screen {
+        /* The Overlay Text */
+        .ui-layer {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, var(--bg-deep), var(--emerald));
-            z-index: 50;
+            pointer-events: none; /* Lets you touch the canvas underneath */
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            transition: opacity 0.6s ease, transform 0.6s ease;
-            text-align: center;
-            padding: 20px;
-        }
-
-        .tap-pulse {
-            width: 80px;
-            height: 80px;
-            background: rgba(212, 175, 55, 0.2);
-            border: 2px solid var(--gold);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            animation: pulseTap 1.5s infinite;
-            margin-bottom: 20px;
-            font-size: 2rem;
-        }
-
-        @keyframes pulseTap {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.7); }
-            70% { transform: scale(1.1); box-shadow: 0 0 0 20px rgba(212, 175, 55, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
-        }
-
-        #gyro-stage {
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            perspective: 800px;
             z-index: 10;
-            opacity: 0;
-            transform: scale(0.9);
-            transition: opacity 1s ease, transform 1s ease;
-        }
-
-        /* The Premium Card - Notice the dynamic box-shadow using var(--mic-glow) */
-        #mobile-card {
-            width: 85%;
-            max-width: 380px;
-            aspect-ratio: 3/4;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(212, 175, 55, 0.4);
-            border-radius: 24px;
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(212, 175, 55, 0.1), 0 0 calc(var(--mic-glow) * 1.5) rgba(212, 175, 55, 0.4);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 30px;
             text-align: center;
-            transform-style: preserve-3d;
-            transition: box-shadow 0.1s ease-out;
         }
 
-        .card-content {
-            transform: translateZ(50px);
+        .title-box {
+            background: rgba(5, 10, 21, 0.4);
+            padding: 40px;
+            border-radius: 20px;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
         }
 
-        h1.title {
-            font-family: 'Playfair Display', serif;
-            font-size: 3.5rem;
-            font-style: italic;
-            background: linear-gradient(to right, var(--gold-light), var(--gold));
+        h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 4rem;
+            line-height: 1;
+            background: linear-gradient(180deg, #fff, var(--gold));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 5px;
-            line-height: 1.1;
+            margin-bottom: 10px;
         }
 
-        p.subtitle {
+        h2 {
             font-size: 1.2rem;
-            color: var(--text-light);
-            letter-spacing: 2px;
-            margin-bottom: 30px;
-            opacity: 0.9;
-        }
-
-        /* The Moon - Dynamically glows based on voice volume */
-        .moon-icon {
-            font-size: 4rem;
-            margin-bottom: 15px;
-            filter: drop-shadow(0 0 calc(15px + var(--mic-glow)) var(--gold));
-            transform: translateZ(70px);
-            animation: float 4s ease-in-out infinite;
-            transition: filter 0.1s ease-out;
-        }
-
-        .touch-hint {
-            font-size: 0.8rem;
-            color: rgba(255, 255, 255, 0.7);
-            margin-top: 20px;
-            letter-spacing: 1px;
+            color: #ccc;
+            letter-spacing: 4px;
+            font-weight: 300;
             text-transform: uppercase;
         }
 
-        .credit-footer {
+        /* Developer Credit */
+        .credit {
             position: absolute;
-            bottom: 20px;
+            bottom: 15px;
+            width: 100%;
+            text-align: center;
             font-size: 0.75rem;
             color: rgba(255, 255, 255, 0.3);
-            letter-spacing: 3px;
-            text-transform: uppercase;
+            letter-spacing: 2px;
             z-index: 10;
         }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0) translateZ(70px); }
-            50% { transform: translateY(-15px) translateZ(70px); }
+        /* Intro Screen to get permissions */
+        #intro {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #050a15;
+            color: white;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s;
+        }
+
+        .start-btn {
+            background: transparent;
+            border: 2px solid var(--gold);
+            color: var(--gold);
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            border-radius: 30px;
+            margin-top: 20px;
+            font-family: inherit;
+            letter-spacing: 2px;
         }
     </style>
 </head>
 <body>
 
-    <div id="intro-screen">
-        <div class="tap-pulse">✨</div>
-        <p style="letter-spacing: 2px; font-weight: 300; font-size: 1.2rem; margin-bottom: 10px;">TAP TO UNLOCK</p>
-        <p style="font-size: 0.8rem; color: rgba(255,255,255,0.6); max-width: 80%;">Allow permissions when asked to enable motion and sound reactions!</p>
+    <div id="intro">
+        <div style="font-size: 3rem; margin-bottom: 20px;">🌙</div>
+        <h3 style="font-weight: 300; letter-spacing: 2px;">SENSOR SANDBOX</h3>
+        <p style="font-size: 0.8rem; opacity: 0.6; margin-top: 10px;">Allow Mic & Motion access</p>
+        <button class="start-btn" id="startBtn">ENTER</button>
     </div>
 
-    <canvas id="touch-canvas"></canvas>
+    <canvas id="stage"></canvas>
 
-    <div id="gyro-stage">
-        <div id="mobile-card">
-            <div class="moon-icon">🌙</div>
-            <div class="card-content">
-                <h1 class="title">Eid<br>Mubarak</h1>
-                <p class="subtitle">from Ateeq</p>
-                <p class="touch-hint">Tap screen • Shake phone • Make some noise</p>
-            </div>
+    <div class="ui-layer">
+        <div class="title-box">
+            <h1>Eid<br>Mubarak</h1>
+            <h2>from Ateeq</h2>
         </div>
     </div>
 
-    <div class="credit-footer">Designed by ATEEQ</div>
+    <div class="credit">Designed by ATEEQ</div>
 
     <script>
-        const introScreen = document.getElementById('intro-screen');
-        const gyroStage = document.getElementById('gyro-stage');
-        const card = document.getElementById('mobile-card');
-        const canvas = document.getElementById('touch-canvas');
+        const canvas = document.getElementById('stage');
         const ctx = canvas.getContext('2d');
+        let width, height;
 
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+        // --- Physics Variables ---
+        let gravityX = 0;
+        let gravityY = 0.5; // Default downward gravity
+        let windForce = 0;  // Driven by microphone
+        let coins = [];
+        let lanterns = [];
+        let windParticles = [];
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
         }
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
+        window.addEventListener('resize', resize);
+        resize();
 
-        // --- Master Initialization ---
-        introScreen.addEventListener('click', async () => {
-            introScreen.style.opacity = '0';
-            introScreen.style.pointerEvents = 'none';
-            setTimeout(() => {
-                gyroStage.style.opacity = '1';
-                gyroStage.style.transform = 'scale(1)';
-            }, 300);
+        // --- Master Setup & Permissions ---
+        document.getElementById('startBtn').addEventListener('click', async () => {
+            document.getElementById('intro').style.opacity = '0';
+            setTimeout(() => document.getElementById('intro').remove(), 500);
 
-            // 1. Request Gyroscope & Accelerometer
+            // 1. Gyro & Accel Permissions
             if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
                 try {
-                    const permissionState = await DeviceOrientationEvent.requestPermission();
-                    if (permissionState === 'granted') {
+                    const perm = await DeviceOrientationEvent.requestPermission();
+                    if (perm === 'granted') {
                         window.addEventListener('deviceorientation', handleOrientation);
-                        window.addEventListener('devicemotion', handleMotion);
+                        window.addEventListener('devicemotion', handleShake);
                     }
-                } catch (e) { console.error("Motion permissions denied", e); }
+                } catch (e) { console.log("Motion denied"); }
             } else {
                 window.addEventListener('deviceorientation', handleOrientation);
-                window.addEventListener('devicemotion', handleMotion);
+                window.addEventListener('devicemotion', handleShake);
             }
 
-            // 2. Request Microphone Access
+            // 2. Microphone Permissions
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                setupAudioAnalysis(stream);
-            } catch (e) {
-                console.log("Microphone access denied or not available. Voice glow disabled.");
-            }
+                setupMicWind(stream);
+            } catch (e) { console.log("Mic denied"); }
+
+            // Initialize Sandbox Elements
+            initLanterns();
+            spawnCoins(10); // Start with a few coins
+            animate();
         });
 
-        // --- SENSOR 1: Gyroscope (Parallax Tilt) ---
-        function handleOrientation(event) {
-            let gamma = event.gamma || 0; 
-            let beta = event.beta || 30;   
+        // --- SENSOR 1: Gyroscope (Real Gravity) ---
+        function handleOrientation(e) {
+            // Beta is front/back tilt (-180 to 180). Gamma is left/right (-90 to 90)
+            let b = e.beta || 0;
+            let g = e.gamma || 0;
 
-            if (gamma > 45) gamma = 45;
-            if (gamma < -45) gamma = -45;
-            if (beta > 60) beta = 60;
-            if (beta < 0) beta = 0; 
-
-            const rotateY = gamma / 2; 
-            const rotateX = (beta - 30) / -2; 
-
-            card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            // Constrain and map to gravity vectors
+            if (b > 90) b = 90; if (b < -90) b = -90;
+            
+            // Map tilt to a physical force multiplier
+            gravityX = g / 45; 
+            gravityY = b / 45;
         }
 
-        // --- SENSOR 2 & 3: Accelerometer (Shake) & Haptics ---
+        // --- SENSOR 2: Accelerometer (Shake for Coins) ---
         let lastX, lastY, lastZ;
-        let shakeThreshold = 25; // How hard they need to shake
-        let lastShakeTime = 0;
-
-        function handleMotion(event) {
-            let acc = event.accelerationIncludingGravity;
+        let lastShake = 0;
+        function handleShake(e) {
+            let acc = e.accelerationIncludingGravity;
             if (!acc || !acc.x) return;
 
             if (lastX !== undefined) {
-                let deltaX = Math.abs(lastX - acc.x);
-                let deltaY = Math.abs(lastY - acc.y);
-                let deltaZ = Math.abs(lastZ - acc.z);
-                let totalMovement = deltaX + deltaY + deltaZ;
-
-                if (totalMovement > shakeThreshold) {
+                let delta = Math.abs(acc.x - lastX) + Math.abs(acc.y - lastY) + Math.abs(acc.z - lastZ);
+                if (delta > 30) { // Shake detected
                     let now = Date.now();
-                    // Prevent firing too rapidly
-                    if (now - lastShakeTime > 1000) { 
-                        triggerMegaExplosion();
-                        lastShakeTime = now;
+                    if (now - lastShake > 500) {
+                        if(navigator.vibrate) navigator.vibrate([100, 50, 100]);
+                        spawnCoins(15); // Drop 15 new coins!
+                        lastShake = now;
                     }
                 }
             }
             lastX = acc.x; lastY = acc.y; lastZ = acc.z;
         }
 
-        // --- SENSOR 4: Microphone (Audio API) ---
-        function setupAudioAnalysis(stream) {
+        // --- SENSOR 3: Microphone (Physical Wind) ---
+        function setupMicWind(stream) {
             const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             const analyser = audioCtx.createAnalyser();
             const source = audioCtx.createMediaStreamSource(stream);
             source.connect(analyser);
-            
             analyser.fftSize = 256;
-            const bufferLength = analyser.frequencyBinCount;
-            const dataArray = new Uint8Array(bufferLength);
+            const dataArray = new Uint8Array(analyser.frequencyBinCount);
 
-            function updateGlow() {
+            function updateWind() {
                 analyser.getByteFrequencyData(dataArray);
                 let sum = 0;
-                for(let i = 0; i < bufferLength; i++) {
-                    sum += dataArray[i];
+                for(let i=0; i<dataArray.length; i++) sum += dataArray[i];
+                let avg = sum / dataArray.length;
+                
+                // If noise is loud enough, create wind force
+                if (avg > 20) {
+                    windForce = (avg - 20) / 50; 
+                    // Create visual wind streaks
+                    if(Math.random() > 0.5) windParticles.push(new WindParticle(windForce));
+                } else {
+                    windForce *= 0.9; // Wind dies down naturally
                 }
-                let average = sum / bufferLength;
-                
-                // Set the CSS variable dynamically based on volume (mapped from 0 to ~50px)
-                document.documentElement.style.setProperty('--mic-glow', `${average * 0.8}px`);
-                
-                requestAnimationFrame(updateGlow);
+                requestAnimationFrame(updateWind);
             }
-            updateGlow();
+            updateWind();
         }
 
-        // --- Touch Interactions & Fireworks System ---
-        let particles = [];
+        // --- Physics Objects ---
 
-        class TouchParticle {
-            constructor(x, y, isMega = false) {
+        // 1. Coins (Eidi)
+        class Coin {
+            constructor(x, y) {
                 this.x = x;
                 this.y = y;
-                const angle = Math.random() * Math.PI * 2;
-                // Mega explosion sends particles faster and further
-                const speed = isMega ? (Math.random() * 15 + 5) : (Math.random() * 6 + 2);
-                this.vx = Math.cos(angle) * speed;
-                this.vy = Math.sin(angle) * speed;
-                this.life = 1.0;
-                this.decay = isMega ? (Math.random() * 0.01 + 0.005) : (Math.random() * 0.02 + 0.015);
-                this.color = Math.random() > 0.4 ? '#d4af37' : (Math.random() > 0.5 ? '#0b4b3c' : '#ffffff');
-                this.size = isMega ? (Math.random() * 5 + 2) : (Math.random() * 3 + 1);
+                this.vx = (Math.random() - 0.5) * 10;
+                this.vy = (Math.random() - 0.5) * 10;
+                this.radius = 20 + Math.random() * 10; // Different sized coins
+                this.restitution = 0.6; // Bounciness
+            }
+            update() {
+                // Apply Gravity and Wind
+                this.vx += gravityX + (windForce * 0.2); 
+                this.vy += gravityY;
+                
+                // Add friction
+                this.vx *= 0.98;
+                this.vy *= 0.98;
+
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // Screen Edge Collisions (Bouncing)
+                let bounced = false;
+                if (this.x - this.radius < 0) { this.x = this.radius; this.vx *= -this.restitution; bounced = true; }
+                if (this.x + this.radius > width) { this.x = width - this.radius; this.vx *= -this.restitution; bounced = true; }
+                if (this.y - this.radius < 0) { this.y = this.radius; this.vy *= -this.restitution; bounced = true; }
+                if (this.y + this.radius > height) { this.y = height - this.radius; this.vy *= -this.restitution; bounced = true; }
+
+                // Light haptic tap if it hits a wall hard
+                if (bounced && Math.abs(this.vx) + Math.abs(this.vy) > 5) {
+                    if(navigator.vibrate) navigator.vibrate(5);
+                }
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = '#d4af37'; // Gold
+                ctx.fill();
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                
+                // Coin detailing
+                ctx.fillStyle = '#050a15';
+                ctx.font = `bold ${this.radius}px Montserrat`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('🌙', this.x, this.y + 2);
+            }
+        }
+
+        function spawnCoins(amount) {
+            for(let i=0; i<amount; i++) {
+                // Drop from the top center/random
+                coins.push(new Coin(width/2 + (Math.random() * 100 - 50), -50));
+            }
+            // Keep performance good by limiting max coins
+            if(coins.length > 60) coins.splice(0, coins.length - 60); 
+        }
+
+        // 2. Hanging Lanterns (Pendulum Physics)
+        class Lantern {
+            constructor(x) {
+                this.originX = x;
+                this.originY = 0;
+                this.length = 150 + Math.random() * 150;
+                this.angle = 0;
+                this.aVelocity = 0;
+                this.aAcceleration = 0;
+            }
+            update() {
+                // Pendulum math: Gravity affects angle. Wind physically pushes the lantern.
+                // We use gravityX to make them swing when the phone tilts.
+                let force = -0.01 * Math.sin(this.angle) + (gravityX * 0.005) + (windForce * 0.01);
+                
+                this.aAcceleration = force;
+                this.aVelocity += this.aAcceleration;
+                this.aVelocity *= 0.95; // Dampening so it doesn't swing forever
+                this.angle += this.aVelocity;
+            }
+            draw() {
+                let endX = this.originX + this.length * Math.sin(this.angle);
+                let endY = this.originY + this.length * Math.cos(this.angle);
+
+                // Draw string
+                ctx.beginPath();
+                ctx.moveTo(this.originX, this.originY);
+                ctx.lineTo(endX, endY);
+                ctx.strokeStyle = 'rgba(212, 175, 55, 0.5)';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Draw Lantern Bulb
+                ctx.beginPath();
+                ctx.arc(endX, endY, 15, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(212, 175, 55, 0.8)';
+                ctx.fill();
+                ctx.shadowBlur = 20;
+                ctx.shadowColor = '#d4af37';
+                ctx.fill();
+                ctx.shadowBlur = 0; // reset
+            }
+        }
+
+        function initLanterns() {
+            lanterns.push(new Lantern(width * 0.2));
+            lanterns.push(new Lantern(width * 0.5));
+            lanterns.push(new Lantern(width * 0.8));
+        }
+
+        // 3. Visual Wind Streaks
+        class WindParticle {
+            constructor(force) {
+                this.x = 0;
+                this.y = Math.random() * height;
+                this.vx = force * 15 + 10;
+                this.length = Math.random() * 100 + 50;
+                this.opacity = 0.5;
             }
             update() {
                 this.x += this.vx;
-                this.y += this.vy;
-                this.vy += 0.15; // Gravity
-                this.life -= this.decay;
+                this.opacity -= 0.02;
             }
             draw() {
-                ctx.globalAlpha = Math.max(0, this.life);
-                ctx.fillStyle = this.color;
                 ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
+                ctx.moveTo(this.x, this.y);
+                ctx.lineTo(this.x - this.length, this.y);
+                ctx.strokeStyle = `rgba(255, 255, 255, ${this.opacity})`;
+                ctx.lineWidth = 2;
+                ctx.stroke();
             }
         }
 
-        // Standard Tap
-        function createExplosion(x, y) {
-            if (navigator.vibrate) navigator.vibrate([30]); 
-            for (let i = 0; i < 30; i++) particles.push(new TouchParticle(x, y));
-        }
-
-        // Massive Shake Explosion
-        function triggerMegaExplosion() {
-            if (navigator.vibrate) navigator.vibrate([100, 50, 100, 50, 200]); // Long rumble
+        // --- Touch Interaction (Flicking Coins) ---
+        canvas.addEventListener('touchstart', (e) => {
+            let touchX = e.touches[0].clientX;
+            let touchY = e.touches[0].clientY;
             
-            // Fire from the center of the screen
-            const cx = window.innerWidth / 2;
-            const cy = window.innerHeight / 2;
-            
-            for (let i = 0; i < 150; i++) {
-                particles.push(new TouchParticle(cx, cy, true));
-            }
-        }
-
-        document.body.addEventListener('touchstart', (e) => {
-            if (introScreen.style.opacity === '0') {
-                const touch = e.touches[0];
-                createExplosion(touch.clientX, touch.clientY);
-            }
+            // Check if we tapped near a coin to flick it away
+            coins.forEach(coin => {
+                let dx = coin.x - touchX;
+                let dy = coin.y - touchY;
+                let dist = Math.sqrt(dx*dx + dy*dy);
+                if (dist < coin.radius * 3) {
+                    coin.vx = (dx / dist) * 25; // Flick velocity
+                    coin.vy = (dy / dist) * 25;
+                    if(navigator.vibrate) navigator.vibrate(15);
+                }
+            });
         });
 
+        // --- Main Animation Loop ---
         function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            for (let i = particles.length - 1; i >= 0; i--) {
-                const p = particles[i];
-                p.update();
-                p.draw();
-                if (p.life <= 0) particles.splice(i, 1);
+            // Draw slightly transparent background for motion blur effect
+            ctx.fillStyle = 'rgba(5, 10, 21, 0.3)';
+            ctx.fillRect(0, 0, width, height);
+
+            lanterns.forEach(l => { l.update(); l.draw(); });
+            
+            coins.forEach(c => { c.update(); c.draw(); });
+            
+            for(let i = windParticles.length - 1; i >= 0; i--) {
+                windParticles[i].update();
+                windParticles[i].draw();
+                if(windParticles[i].opacity <= 0 || windParticles[i].x > width + 200) {
+                    windParticles.splice(i, 1);
+                }
             }
+
             requestAnimationFrame(animate);
         }
-        animate();
 
     </script>
 </body>
