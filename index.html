@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Eid Mubarak | Physical Sandbox</title>
+    <title>Eid Mubarak | Fireworks & Sensors</title>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,700&family=Montserrat:wght@300;400&display=swap" rel="stylesheet">
     
     <style>
@@ -29,7 +29,6 @@
             touch-action: none;
         }
 
-        /* Full screen physics canvas */
         canvas {
             display: block;
             width: 100%;
@@ -40,14 +39,13 @@
             z-index: 1;
         }
 
-        /* The Overlay Text */
         .ui-layer {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            pointer-events: none; /* Lets you touch the canvas underneath */
+            pointer-events: none; 
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -64,6 +62,7 @@
             -webkit-backdrop-filter: blur(8px);
             border: 1px solid rgba(212, 175, 55, 0.2);
             box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            transition: transform 0.1s ease-out;
         }
 
         h1 {
@@ -84,7 +83,23 @@
             text-transform: uppercase;
         }
 
-        /* Developer Credit */
+        /* Subtle hint that disappears after first tap */
+        #tap-hint {
+            position: absolute;
+            bottom: 60px;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            animation: pulseHint 2s infinite;
+            transition: opacity 0.5s;
+        }
+
+        @keyframes pulseHint {
+            0%, 100% { opacity: 0.4; transform: scale(0.95); }
+            50% { opacity: 1; transform: scale(1.05); }
+        }
+
         .credit {
             position: absolute;
             bottom: 15px;
@@ -95,50 +110,18 @@
             letter-spacing: 2px;
             z-index: 10;
         }
-
-        /* Intro Screen to get permissions */
-        #intro {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: #050a15;
-            color: white;
-            z-index: 100;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            transition: opacity 0.5s;
-        }
-
-        .start-btn {
-            background: transparent;
-            border: 2px solid var(--gold);
-            color: var(--gold);
-            padding: 15px 40px;
-            font-size: 1.2rem;
-            border-radius: 30px;
-            margin-top: 20px;
-            font-family: inherit;
-            letter-spacing: 2px;
-        }
     </style>
 </head>
 <body>
 
-    <div id="intro">
-        <div style="font-size: 3rem; margin-bottom: 20px;">🌙</div>
-        <h3 style="font-weight: 300; letter-spacing: 2px;">SENSOR SANDBOX</h3>
-        <p style="font-size: 0.8rem; opacity: 0.6; margin-top: 10px;">Allow Mic & Motion access</p>
-        <button class="start-btn" id="startBtn">ENTER</button>
-    </div>
-
     <canvas id="stage"></canvas>
 
     <div class="ui-layer">
-        <div class="title-box">
+        <div class="title-box" id="card">
             <h1>Eid<br>Mubarak</h1>
             <h2>from Ateeq</h2>
         </div>
+        <div id="tap-hint">Tap anywhere to celebrate</div>
     </div>
 
     <div class="credit">Designed by ATEEQ</div>
@@ -148,13 +131,18 @@
         const ctx = canvas.getContext('2d');
         let width, height;
 
-        // --- Physics Variables ---
+        // --- Core Variables ---
         let gravityX = 0;
-        let gravityY = 0.5; // Default downward gravity
-        let windForce = 0;  // Driven by microphone
-        let coins = [];
+        let windForce = 0;
         let lanterns = [];
         let windParticles = [];
+        let fireworks = [];
+        let confettis = [];
+        
+        let isInitialized = false;
+        let audioCtx;
+
+        const colors = ['#d4af37', '#ff5e62', '#38ef7d', '#00c6ff', '#ffffff', '#ff99cc'];
 
         function resize() {
             width = canvas.width = window.innerWidth;
@@ -163,12 +151,60 @@
         window.addEventListener('resize', resize);
         resize();
 
-        // --- Master Setup & Permissions ---
-        document.getElementById('startBtn').addEventListener('click', async () => {
-            document.getElementById('intro').style.opacity = '0';
-            setTimeout(() => document.getElementById('intro').remove(), 500);
+        // --- AUDIO SYNTHESIS ENGINE ---
+        // Generates firework sounds directly in code (no external MP3s needed)
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
 
-            // 1. Gyro & Accel Permissions
+        function playFireworkSound(isBig) {
+            if (!audioCtx) return;
+            
+            // White noise buffer
+            const bufferSize = audioCtx.sampleRate * (isBig ? 1.5 : 0.5);
+            const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                data[i] = Math.random() * 2 - 1; 
+            }
+            
+            const noise = audioCtx.createBufferSource();
+            noise.buffer = buffer;
+
+            // Filter to make it sound like a boom/crackle instead of static
+            const filter = audioCtx.createBiquadFilter();
+            filter.type = isBig ? 'lowpass' : 'bandpass';
+            filter.frequency.value = isBig ? 800 : 3000;
+            if(!isBig) filter.Q.value = 1;
+
+            // Volume fading (Envelope)
+            const gainNode = audioCtx.createGain();
+            gainNode.gain.setValueAtTime(isBig ? 1 : 0.4, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + (isBig ? 1.4 : 0.4));
+
+            noise.connect(filter);
+            filter.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            noise.start();
+        }
+
+        // --- FIRST TAP INITIALIZATION (Unlocks Browsers) ---
+        async function startExperience(e) {
+            if (isInitialized) return;
+            isInitialized = true;
+
+            // Hide the hint text
+            document.getElementById('tap-hint').style.opacity = '0';
+            
+            // 1. Init Audio
+            initAudio();
+
+            // 2. Request Gyro & Accel Permissions (iOS 13+)
             if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
                 try {
                     const perm = await DeviceOrientationEvent.requestPermission();
@@ -176,39 +212,33 @@
                         window.addEventListener('deviceorientation', handleOrientation);
                         window.addEventListener('devicemotion', handleShake);
                     }
-                } catch (e) { console.log("Motion denied"); }
+                } catch (err) { console.log("Motion denied"); }
             } else {
                 window.addEventListener('deviceorientation', handleOrientation);
                 window.addEventListener('devicemotion', handleShake);
             }
 
-            // 2. Microphone Permissions
+            // 3. Request Mic Permissions (For Wind)
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
                 setupMicWind(stream);
-            } catch (e) { console.log("Mic denied"); }
+            } catch (err) { console.log("Mic denied"); }
 
-            // Initialize Sandbox Elements
-            initLanterns();
-            spawnCoins(10); // Start with a few coins
-            animate();
-        });
-
-        // --- SENSOR 1: Gyroscope (Real Gravity) ---
-        function handleOrientation(e) {
-            // Beta is front/back tilt (-180 to 180). Gamma is left/right (-90 to 90)
-            let b = e.beta || 0;
-            let g = e.gamma || 0;
-
-            // Constrain and map to gravity vectors
-            if (b > 90) b = 90; if (b < -90) b = -90;
-            
-            // Map tilt to a physical force multiplier
-            gravityX = g / 45; 
-            gravityY = b / 45;
+            // Trigger the first touch firework immediately
+            handleTouch(e);
         }
 
-        // --- SENSOR 2: Accelerometer (Shake for Coins) ---
+        // --- SENSOR 1: Gyroscope (Real Gravity for Lanterns) ---
+        function handleOrientation(e) {
+            let g = e.gamma || 0;
+            if (g > 90) g = 90; if (g < -90) g = -90;
+            gravityX = g / 45; 
+            
+            // Subtle card parallax
+            document.getElementById('card').style.transform = `rotateY(${g/3}deg)`;
+        }
+
+        // --- SENSOR 2: Accelerometer (Shake for Big Fireworks) ---
         let lastX, lastY, lastZ;
         let lastShake = 0;
         function handleShake(e) {
@@ -217,11 +247,10 @@
 
             if (lastX !== undefined) {
                 let delta = Math.abs(acc.x - lastX) + Math.abs(acc.y - lastY) + Math.abs(acc.z - lastZ);
-                if (delta > 30) { // Shake detected
+                if (delta > 40) { // Shake detected
                     let now = Date.now();
-                    if (now - lastShake > 500) {
-                        if(navigator.vibrate) navigator.vibrate([100, 50, 100]);
-                        spawnCoins(15); // Drop 15 new coins!
+                    if (now - lastShake > 1000) { // 1 second cooldown
+                        triggerBigFirework();
                         lastShake = now;
                     }
                 }
@@ -231,7 +260,6 @@
 
         // --- SENSOR 3: Microphone (Physical Wind) ---
         function setupMicWind(stream) {
-            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             const analyser = audioCtx.createAnalyser();
             const source = audioCtx.createMediaStreamSource(stream);
             source.connect(analyser);
@@ -244,139 +272,139 @@
                 for(let i=0; i<dataArray.length; i++) sum += dataArray[i];
                 let avg = sum / dataArray.length;
                 
-                // If noise is loud enough, create wind force
                 if (avg > 20) {
-                    windForce = (avg - 20) / 50; 
-                    // Create visual wind streaks
+                    windForce = (avg - 20) / 40; 
                     if(Math.random() > 0.5) windParticles.push(new WindParticle(windForce));
                 } else {
-                    windForce *= 0.9; // Wind dies down naturally
+                    windForce *= 0.9; 
                 }
                 requestAnimationFrame(updateWind);
             }
             updateWind();
         }
 
-        // --- Physics Objects ---
 
-        // 1. Coins (Eidi)
-        class Coin {
+        // --- PHYSICS VISUALS ---
+
+        // 1. Fireworks
+        class Firework {
+            constructor(x, y, isBig = false) {
+                this.x = x;
+                this.y = y;
+                this.isBig = isBig;
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+                
+                let angle = Math.random() * Math.PI * 2;
+                let speed = isBig ? (Math.random() * 12 + 6) : (Math.random() * 6 + 2);
+                this.vx = Math.cos(angle) * speed;
+                this.vy = Math.sin(angle) * speed;
+                
+                this.life = 1.0;
+                this.decay = isBig ? (Math.random() * 0.015 + 0.005) : (Math.random() * 0.03 + 0.015);
+                this.size = isBig ? (Math.random() * 4 + 2) : (Math.random() * 2 + 1);
+            }
+            update() {
+                this.vx += gravityX * 0.5 + windForce * 0.2; 
+                this.vy += 0.15; // Standard gravity pulling down
+                this.vx *= 0.96; // Air resistance
+                this.vy *= 0.96;
+                this.x += this.vx;
+                this.y += this.vy;
+                this.life -= this.decay;
+            }
+            draw() {
+                ctx.globalAlpha = Math.max(0, this.life);
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+                
+                if (this.isBig) {
+                    ctx.shadowBlur = 10;
+                    ctx.shadowColor = this.color;
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                }
+            }
+        }
+
+        // 2. Confetti
+        class Confetti {
             constructor(x, y) {
                 this.x = x;
                 this.y = y;
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+                this.size = Math.random() * 8 + 4;
                 this.vx = (Math.random() - 0.5) * 10;
-                this.vy = (Math.random() - 0.5) * 10;
-                this.radius = 20 + Math.random() * 10; // Different sized coins
-                this.restitution = 0.6; // Bounciness
+                this.vy = (Math.random() - 0.5) * 10 - 2;
+                this.angle = Math.random() * 360;
+                this.spin = (Math.random() - 0.5) * 0.2;
             }
             update() {
-                // Apply Gravity and Wind
-                this.vx += gravityX + (windForce * 0.2); 
-                this.vy += gravityY;
-                
-                // Add friction
+                this.vx += windForce * 0.5;
+                this.vy += 0.05; // Light gravity
                 this.vx *= 0.98;
-                this.vy *= 0.98;
-
                 this.x += this.vx;
-                this.y += this.vy;
-
-                // Screen Edge Collisions (Bouncing)
-                let bounced = false;
-                if (this.x - this.radius < 0) { this.x = this.radius; this.vx *= -this.restitution; bounced = true; }
-                if (this.x + this.radius > width) { this.x = width - this.radius; this.vx *= -this.restitution; bounced = true; }
-                if (this.y - this.radius < 0) { this.y = this.radius; this.vy *= -this.restitution; bounced = true; }
-                if (this.y + this.radius > height) { this.y = height - this.radius; this.vy *= -this.restitution; bounced = true; }
-
-                // Light haptic tap if it hits a wall hard
-                if (bounced && Math.abs(this.vx) + Math.abs(this.vy) > 5) {
-                    if(navigator.vibrate) navigator.vibrate(5);
-                }
+                this.y += this.vy + Math.sin(this.angle) * 2; // Flutter effect
+                this.angle += this.spin;
             }
             draw() {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                ctx.fillStyle = '#d4af37'; // Gold
-                ctx.fill();
-                ctx.strokeStyle = '#fff';
-                ctx.lineWidth = 2;
-                ctx.stroke();
-                
-                // Coin detailing
-                ctx.fillStyle = '#050a15';
-                ctx.font = `bold ${this.radius}px Montserrat`;
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText('🌙', this.x, this.y + 2);
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.angle);
+                ctx.fillStyle = this.color;
+                ctx.globalAlpha = 0.8;
+                ctx.fillRect(-this.size/2, -this.size/2, this.size, this.size * 1.5);
+                ctx.restore();
             }
         }
 
-        function spawnCoins(amount) {
-            for(let i=0; i<amount; i++) {
-                // Drop from the top center/random
-                coins.push(new Coin(width/2 + (Math.random() * 100 - 50), -50));
-            }
-            // Keep performance good by limiting max coins
-            if(coins.length > 60) coins.splice(0, coins.length - 60); 
-        }
-
-        // 2. Hanging Lanterns (Pendulum Physics)
+        // 3. Hanging Lanterns (Pendulums)
         class Lantern {
             constructor(x) {
                 this.originX = x;
                 this.originY = 0;
-                this.length = 150 + Math.random() * 150;
+                this.length = 150 + Math.random() * 100;
                 this.angle = 0;
                 this.aVelocity = 0;
                 this.aAcceleration = 0;
             }
             update() {
-                // Pendulum math: Gravity affects angle. Wind physically pushes the lantern.
-                // We use gravityX to make them swing when the phone tilts.
                 let force = -0.01 * Math.sin(this.angle) + (gravityX * 0.005) + (windForce * 0.01);
-                
                 this.aAcceleration = force;
                 this.aVelocity += this.aAcceleration;
-                this.aVelocity *= 0.95; // Dampening so it doesn't swing forever
+                this.aVelocity *= 0.95; 
                 this.angle += this.aVelocity;
             }
             draw() {
                 let endX = this.originX + this.length * Math.sin(this.angle);
                 let endY = this.originY + this.length * Math.cos(this.angle);
 
-                // Draw string
                 ctx.beginPath();
                 ctx.moveTo(this.originX, this.originY);
                 ctx.lineTo(endX, endY);
-                ctx.strokeStyle = 'rgba(212, 175, 55, 0.5)';
+                ctx.strokeStyle = 'rgba(212, 175, 55, 0.4)';
                 ctx.lineWidth = 2;
                 ctx.stroke();
 
-                // Draw Lantern Bulb
                 ctx.beginPath();
-                ctx.arc(endX, endY, 15, 0, Math.PI * 2);
+                ctx.arc(endX, endY, 12, 0, Math.PI * 2);
                 ctx.fillStyle = 'rgba(212, 175, 55, 0.8)';
                 ctx.fill();
-                ctx.shadowBlur = 20;
+                ctx.shadowBlur = 15;
                 ctx.shadowColor = '#d4af37';
                 ctx.fill();
-                ctx.shadowBlur = 0; // reset
+                ctx.shadowBlur = 0; 
             }
         }
 
-        function initLanterns() {
-            lanterns.push(new Lantern(width * 0.2));
-            lanterns.push(new Lantern(width * 0.5));
-            lanterns.push(new Lantern(width * 0.8));
-        }
-
-        // 3. Visual Wind Streaks
+        // 4. Visual Wind
         class WindParticle {
             constructor(force) {
                 this.x = 0;
                 this.y = Math.random() * height;
-                this.vx = force * 15 + 10;
-                this.length = Math.random() * 100 + 50;
+                this.vx = force * 20 + 10;
+                this.length = Math.random() * 150 + 50;
                 this.opacity = 0.5;
             }
             update() {
@@ -388,49 +416,89 @@
                 ctx.moveTo(this.x, this.y);
                 ctx.lineTo(this.x - this.length, this.y);
                 ctx.strokeStyle = `rgba(255, 255, 255, ${this.opacity})`;
-                ctx.lineWidth = 2;
+                ctx.lineWidth = 1;
                 ctx.stroke();
             }
         }
 
-        // --- Touch Interaction (Flicking Coins) ---
-        canvas.addEventListener('touchstart', (e) => {
-            let touchX = e.touches[0].clientX;
-            let touchY = e.touches[0].clientY;
-            
-            // Check if we tapped near a coin to flick it away
-            coins.forEach(coin => {
-                let dx = coin.x - touchX;
-                let dy = coin.y - touchY;
-                let dist = Math.sqrt(dx*dx + dy*dy);
-                if (dist < coin.radius * 3) {
-                    coin.vx = (dx / dist) * 25; // Flick velocity
-                    coin.vy = (dy / dist) * 25;
-                    if(navigator.vibrate) navigator.vibrate(15);
-                }
-            });
+        function initLanterns() {
+            lanterns.push(new Lantern(width * 0.15));
+            lanterns.push(new Lantern(width * 0.5));
+            lanterns.push(new Lantern(width * 0.85));
+        }
+
+        // --- Interaction Triggers ---
+
+        function handleTouch(e) {
+            let touchX = e.touches ? e.touches[0].clientX : e.clientX;
+            let touchY = e.touches ? e.touches[0].clientY : e.clientY;
+
+            // Generate small fireworks & confetti
+            for(let i=0; i<30; i++) fireworks.push(new Firework(touchX, touchY, false));
+            for(let i=0; i<10; i++) confettis.push(new Confetti(touchX, touchY));
+
+            playFireworkSound(false);
+            if(navigator.vibrate) navigator.vibrate(20);
+        }
+
+        function triggerBigFirework() {
+            // Shoots from center or bottom
+            let cx = width / 2 + (Math.random() * 100 - 50);
+            let cy = height * 0.4 + (Math.random() * 100 - 50);
+
+            // Create massive multi-layer burst
+            for(let i=0; i<150; i++) fireworks.push(new Firework(cx, cy, true));
+            for(let i=0; i<40; i++) confettis.push(new Confetti(cx, cy));
+
+            playFireworkSound(true);
+            if(navigator.vibrate) navigator.vibrate([100, 50, 200]);
+        }
+
+        // Attach listeners directly to the document
+        document.addEventListener('touchstart', (e) => {
+            if (!isInitialized) startExperience(e);
+            else handleTouch(e);
+        }, {passive: false});
+
+        document.addEventListener('click', (e) => {
+            if (!isInitialized) startExperience(e);
+            else handleTouch(e);
         });
 
         // --- Main Animation Loop ---
+        initLanterns();
+
         function animate() {
-            // Draw slightly transparent background for motion blur effect
+            // Draw background with slight trail effect
+            ctx.globalAlpha = 1;
             ctx.fillStyle = 'rgba(5, 10, 21, 0.3)';
             ctx.fillRect(0, 0, width, height);
 
+            ctx.globalAlpha = 1;
             lanterns.forEach(l => { l.update(); l.draw(); });
-            
-            coins.forEach(c => { c.update(); c.draw(); });
             
             for(let i = windParticles.length - 1; i >= 0; i--) {
                 windParticles[i].update();
                 windParticles[i].draw();
-                if(windParticles[i].opacity <= 0 || windParticles[i].x > width + 200) {
-                    windParticles.splice(i, 1);
-                }
+                if(windParticles[i].opacity <= 0) windParticles.splice(i, 1);
+            }
+
+            for(let i = confettis.length - 1; i >= 0; i--) {
+                confettis[i].update();
+                confettis[i].draw();
+                if(confettis[i].y > height + 20) confettis.splice(i, 1);
+            }
+
+            for(let i = fireworks.length - 1; i >= 0; i--) {
+                fireworks[i].update();
+                fireworks[i].draw();
+                if(fireworks[i].life <= 0) fireworks.splice(i, 1);
             }
 
             requestAnimationFrame(animate);
         }
+        
+        animate();
 
     </script>
 </body>
